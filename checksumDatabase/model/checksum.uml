@@ -4,7 +4,17 @@
     <packageImport xmi:type="uml:PackageImport" xmi:id="_4G_3sWbvEeaDkvzeY39u5w">
       <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/solidity_types.uml#_N0uwUKKsEeWvY9GWZZMftw"/>
     </packageImport>
-    <packagedElement xmi:type="uml:Package" xmi:id="_B1GUsGbwEeaDkvzeY39u5w" name="use-cases"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_B1GUsGbwEeaDkvzeY39u5w" name="use-cases">
+      <packagedElement xmi:type="uml:Actor" xmi:id="_ERHmYI5cEeaQkPd63dgVMQ" name="owner"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_GFuXkI5cEeaQkPd63dgVMQ" name="addEntry">
+        <ownedBehavior xmi:type="uml:Activity" xmi:id="_CsnRQI5dEeaQkPd63dgVMQ" name="Activity1" specification="_Xsvg8GbxEeaDkvzeY39u5w"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_XokjQI5cEeaQkPd63dgVMQ" client="_ERHmYI5cEeaQkPd63dgVMQ" supplier="_GFuXkI5cEeaQkPd63dgVMQ"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_SYn3II5dEeaQkPd63dgVMQ" name="changeOwner">
+        <ownedBehavior xmi:type="uml:Activity" xmi:id="_TfBegI5dEeaQkPd63dgVMQ" name="Activity1" specification="_00EccGbxEeaDkvzeY39u5w"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_Wv1H8I5dEeaQkPd63dgVMQ" client="_ERHmYI5cEeaQkPd63dgVMQ" supplier="_SYn3II5dEeaQkPd63dgVMQ"/>
+    </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_DbCXwGbwEeaDkvzeY39u5w" name="contract">
       <packagedElement xmi:type="uml:Class" xmi:id="_NVU2oGbwEeaDkvzeY39u5w" name="ChecksumDatabase">
         <ownedRule xmi:type="uml:Constraint" xmi:id="_-PhqQGbxEeaDkvzeY39u5w" name="onlyOwner" constrainedElement="_Xsvg8GbxEeaDkvzeY39u5w _00EccGbxEeaDkvzeY39u5w">
@@ -40,7 +50,7 @@
             <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_Xsvg8GbxEeaDkvzeY39u5w" name="addEntry">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_Xsvg8GbxEeaDkvzeY39u5w" name="addEntry" method="_CsnRQI5dEeaQkPd63dgVMQ">
           <ownedComment xmi:type="uml:Comment" xmi:id="_KAkkgGb0EeaDkvzeY39u5w">
             <body>Add an entry to the database.</body>
           </ownedComment>
@@ -57,7 +67,7 @@
             <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_00EccGbxEeaDkvzeY39u5w" name="changeOwner">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_00EccGbxEeaDkvzeY39u5w" name="changeOwner" method="_TfBegI5dEeaQkPd63dgVMQ">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_4MoTsGbxEeaDkvzeY39u5w" name="newOwner">
             <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_bcZf4KKsEeWvY9GWZZMftw"/>
           </ownedParameter>
