@@ -2,4 +2,8 @@
 
 A simple bockchain base database for version checksums.
 
-![class](licensemanager/doc/ClassDiagram.PNG)
+![class](checksumDatabase/doc/ClassDiagram.PNG)
+
+see [doc](checksumDatabase/doc/contract.md) for details
+
+
