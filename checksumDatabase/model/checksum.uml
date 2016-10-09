@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Contracts="http:///schemas/Contracts/_Ig5nQIIsEeafK64Rq2tVkA/34" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Contracts/_Ig5nQIIsEeafK64Rq2tVkA/34 pathmap://UML_PROFILE/solidity_profiles.uml#_Ig94sIIsEeafK64Rq2tVkA">
+  <uml:Model xmi:id="_4G_3sGbvEeaDkvzeY39u5w" name="checksum">
+    <packageImport xmi:type="uml:PackageImport" xmi:id="_4G_3sWbvEeaDkvzeY39u5w">
+      <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/solidity_types.uml#_N0uwUKKsEeWvY9GWZZMftw"/>
+    </packageImport>
+    <packagedElement xmi:type="uml:Package" xmi:id="_B1GUsGbwEeaDkvzeY39u5w" name="use-cases"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_DbCXwGbwEeaDkvzeY39u5w" name="contract">
+      <packagedElement xmi:type="uml:Class" xmi:id="_NVU2oGbwEeaDkvzeY39u5w" name="ChecksumDatabase">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="_-PhqQGbxEeaDkvzeY39u5w" name="onlyOwner" constrainedElement="_Xsvg8GbxEeaDkvzeY39u5w _00EccGbxEeaDkvzeY39u5w">
+          <specification xmi:type="uml:LiteralString" xmi:id="_-PlUoGbxEeaDkvzeY39u5w" name="constraintSpec" value="if(msg.sender!=owner) throw;"/>
+        </ownedRule>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_Rx-BEGbwEeaDkvzeY39u5w" name="name" visibility="public">
+          <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_ZcljYGbwEeaDkvzeY39u5w" name="url" visibility="public">
+          <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_eey5AGbwEeaDkvzeY39u5w" name="description">
+          <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_kZA0sGbwEeaDkvzeY39u5w" name="owner">
+          <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_bcZf4KKsEeWvY9GWZZMftw"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_srrOcGbwEeaDkvzeY39u5w" name="count">
+          <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_Z66fAKKsEeWvY9GWZZMftw"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_J0WNwGbxEeaDkvzeY39u5w" name="entries" type="_xt_40GbwEeaDkvzeY39u5w"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_UgAfMGbxEeaDkvzeY39u5w" name="ChecksumDatabase">
+          <ownedComment xmi:type="uml:Comment" xmi:id="_qfbI8IIxEeaDhZm_59mVQg">
+            <body>A Constructor.</body>
+          </ownedComment>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_hFmtwGbxEeaDkvzeY39u5w" name="_name">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_iomxkGbxEeaDkvzeY39u5w" name="_url">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_jaVJcGbxEeaDkvzeY39u5w" name="_description">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_Xsvg8GbxEeaDkvzeY39u5w" name="addEntry">
+          <ownedComment xmi:type="uml:Comment" xmi:id="_KAkkgGb0EeaDkvzeY39u5w">
+            <body>Add an entry to the database.</body>
+          </ownedComment>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_tTGlYGbxEeaDkvzeY39u5w" name="_version">
+            <ownedComment xmi:type="uml:Comment" xmi:id="_dH-lIGbyEeaDkvzeY39u5w">
+              <body>The version the checksum belongs to.</body>
+            </ownedComment>
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_tZYMgGbxEeaDkvzeY39u5w" name="_checksum">
+            <ownedComment xmi:type="uml:Comment" xmi:id="_f_Y3IGbyEeaDkvzeY39u5w">
+              <body>The checksum of the version.</body>
+            </ownedComment>
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_00EccGbxEeaDkvzeY39u5w" name="changeOwner">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_4MoTsGbxEeaDkvzeY39u5w" name="newOwner">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_bcZf4KKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_T4IxcGbyEeaDkvzeY39u5w" name="VersionChecksum">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_hiEK0GbyEeaDkvzeY39u5w" name="version">
+            <ownedComment xmi:type="uml:Comment" xmi:id="_hiEK0WbyEeaDkvzeY39u5w">
+              <body>The version the checksum belongs to.</body>
+            </ownedComment>
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_hiGAAGbyEeaDkvzeY39u5w" name="checksum">
+            <ownedComment xmi:type="uml:Comment" xmi:id="_hiGAAWbyEeaDkvzeY39u5w">
+              <body>The checksum of the version.</body>
+            </ownedComment>
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_gIhvkGbzEeaDkvzeY39u5w" name="date">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_Z66fAKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_l0TmoGbzEeaDkvzeY39u5w" name="id">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_Z66fAKKsEeWvY9GWZZMftw"/>
+          </ownedParameter>
+        </ownedOperation>
+        <nestedClassifier xmi:type="uml:Class" xmi:id="_xt_40GbwEeaDkvzeY39u5w" name="ChecksumEntry">
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_7MIAIGbwEeaDkvzeY39u5w" name="version">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_-NyaUGbwEeaDkvzeY39u5w" name="checksum">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_W0LXkKKsEeWvY9GWZZMftw"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_Cfv-wGbxEeaDkvzeY39u5w" name="date">
+            <type xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_Z66fAKKsEeWvY9GWZZMftw"/>
+          </ownedAttribute>
+        </nestedClassifier>
+      </packagedElement>
+    </packagedElement>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_4HAewGbvEeaDkvzeY39u5w">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_y5OpUIItEeaDhZm_59mVQg" source="PapyrusVersion">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_y5OpUYItEeaDhZm_59mVQg" key="Version" value="0.0.35"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_y5OpUoItEeaDhZm_59mVQg" key="Comment" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_y5OpU4ItEeaDhZm_59mVQg" key="Copyright" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_y5OpVIItEeaDhZm_59mVQg" key="Date" value="2016-09-24"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_y5OpVYItEeaDhZm_59mVQg" key="Author" value="Urs Zeidler"/>
+      </eAnnotations>
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_4HAex2bvEeaDkvzeY39u5w" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://UML_PROFILE/solidity_profiles.uml#_Ig94sIIsEeafK64Rq2tVkA"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_PROFILE/solidity_profiles.uml#_uCE5EKHREeWjOZ0I8ilEXA"/>
+    </profileApplication>
+  </uml:Model>
+  <Contracts:Contract xmi:id="_pVumUGbwEeaDkvzeY39u5w" base_Class="_NVU2oGbwEeaDkvzeY39u5w" defaultFunction="true"/>
+  <Contracts:Struct xmi:id="_5tgGAGbwEeaDkvzeY39u5w" base_Class="_xt_40GbwEeaDkvzeY39u5w"/>
+  <Contracts:KeyMapping xmi:id="_Ojp1gGbxEeaDkvzeY39u5w" base_Property="_J0WNwGbxEeaDkvzeY39u5w">
+    <key xmi:type="uml:DataType" href="pathmap://UML_LIBRARIES/solidity_types.uml#_Z66fAKKsEeWvY9GWZZMftw"/>
+  </Contracts:KeyMapping>
+  <Contracts:Function xmi:id="_JVlYsGbyEeaDkvzeY39u5w" base_Operation="_Xsvg8GbxEeaDkvzeY39u5w"/>
+  <Contracts:Function xmi:id="_KVzfkGbyEeaDkvzeY39u5w" base_Operation="_00EccGbxEeaDkvzeY39u5w"/>
+  <Contracts:Event xmi:id="_oI7xIGbyEeaDkvzeY39u5w" base_Operation="_T4IxcGbyEeaDkvzeY39u5w"/>
+  <Contracts:Constructor xmi:id="_4muXoIItEeaDhZm_59mVQg" base_Operation="_UgAfMGbxEeaDkvzeY39u5w"/>
+</xmi:XMI>
