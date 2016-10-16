@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="de.urszeidler.eclipse.solidity.laucher.core.launch.uml2solidity">
+<stringAttribute key="CONTRACT_FILE_HEADER" value="/**&#10;*(c) urs zeidler&#10;*&#10;**/"/>
+<booleanAttribute key="GENERATE_ABI" value="true"/>
+<stringAttribute key="GENERATE_ABI_TARGET" value="/checksumDatabase/mix/abi"/>
+<booleanAttribute key="GENERATE_CONTRACT_FILES" value="true"/>
+<booleanAttribute key="GENERATE_HTML" value="true"/>
+<booleanAttribute key="GENERATE_JS_CONTROLLER" value="true"/>
+<stringAttribute key="GENERATE_JS_CONTROLLER_TARGET" value="/checksumDatabase/mix/js"/>
+<stringAttribute key="GENERATE_JS_TEST_TARGET" value="/checksumDatabase/mix/test"/>
+<booleanAttribute key="GENERATE_MARKDOWN" value="true"/>
+<booleanAttribute key="GENERATE_MIX" value="false"/>
+<booleanAttribute key="GENERATE_WEB3" value="true"/>
+<stringAttribute key="GENERATION_TARGET" value="/checksumDatabase/mix"/>
+<stringAttribute key="GENERATION_TARGET_DOC" value="/checksumDatabase/doc"/>
+<stringAttribute key="JS_FILE_HEADER" value="// (c) urs zeidler"/>
+<booleanAttribute key="enable_version" value="false"/>
+<stringAttribute key="modelUri" value="/checksumDatabase/model/checksum.uml"/>
+<stringAttribute key="version_pragma" value="pragma solidity ^0.4.0;"/>
+</launchConfiguration>
