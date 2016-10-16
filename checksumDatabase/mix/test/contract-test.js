@@ -1,28 +1,52 @@
-//a simple bean class arount the contract
-// the ChecksumDatabaseModel
+// (c) urs zeidler
+/**
+* A simple bean class around the contract.
+* The ChecksumDatabaseModel.
+**/
 function ChecksumDatabaseModel(contract) {
 this.contract = contract;
-this.getName = function(){
-return contract.name(); 
-}
-this.getUrl = function(){
-return contract.url(); 
-}
-this.getDescription = function(){
-return contract.description(); 
-}
-this.getOwner = function(){
-return contract.owner(); 
-}
-this.getCount = function(){
-return contract.count(); 
-}
-this.addEntry = function(_version,_checksum){
-return contract.addEntry(_version,_checksum); 
-}
-this.changeOwner = function(newOwner){
-return contract.changeOwner(newOwner); 
-}
+	/**
+	* Getter for name.
+	**/
+	this.getName = function(){
+		return contract.name(); 
+	}
+	/**
+	* Getter for url.
+	**/
+	this.getUrl = function(){
+		return contract.url(); 
+	}
+	/**
+	* Getter for description.
+	**/
+	this.getDescription = function(){
+		return contract.description(); 
+	}
+	/**
+	* Getter for owner.
+	**/
+	this.getOwner = function(){
+		return contract.owner(); 
+	}
+	/**
+	* Getter for count.
+	**/
+	this.getCount = function(){
+		return contract.count(); 
+	}
+	/**
+	* Call addEntry.
+	**/
+	this.addEntry = function(_version,_checksum){
+		return contract.addEntry(_version,_checksum); 
+	}
+	/**
+	* Call changeOwner.
+	**/
+	this.changeOwner = function(newOwner){
+		return contract.changeOwner(newOwner); 
+	}
 }// end of function ChecksumDatabaseModel
 
 //test class for ChecksumDatabase

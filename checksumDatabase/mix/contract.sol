@@ -1,8 +1,8 @@
 /**
-*
-* (c) Urs Zeidler
+*(c) urs zeidler
 *
 **/
+
 
 
 

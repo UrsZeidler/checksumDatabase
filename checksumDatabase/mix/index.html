@@ -2,7 +2,7 @@
 <html>
 <head>
 <!--
-<script type='text/javascript' src="contractWeb3.js">
+<script type='text/javascript' src="js/contractWeb3.js">
 </script>
 -->
 
@@ -19,6 +19,7 @@
 .contract {
 	border-style: solid;
 	border-width: 1px;
+	margin-bottom: 4px;
 	} 
 .contract_attributes{
 	border-style: solid;
@@ -31,38 +32,41 @@
 .function_execution{}
 .function_parameter{}
 .function_result{}
+.eventRow{
+	display: table-row;
+	width: auto;
+}
+.eventValue{	
+	float: left; /*fix for  buggy browsers*/
+	display: table-column;
+	margin-right: 4px;
+}
 
 </style>
 </head>
 <body bgcolor='#E6E6FA'>
-	<h1>Sample Interface for contract</h1>
-<div class="contract">
+	<h1>checksum per release</h1>
+
+<a onclick="mode('e')">user</a> <a onclick="mode('manager')">maintainer</a>
+
+
+
 <div id="Contract-Gui" ></div>
-</div>
 <div id="eventLog" ></div>
 
-<!-- Start of user code custom_contracthtml --> 
-<a onclick="mode('e')"> user </a><a onclick="mode('manager')"> manager</a>
-<!-- End of user code -->
-
-
 <script type='text/javascript'>
+web3.eth.defaultAccount = web3.eth.accounts[0];
 
 var c = new ContractPage('Contract-Gui');
-//Start of user code page_Contract_js_functions
 c.db.addManager(contracts['ChecksumDatabase'].contract);
-c.switchMode('user');
-
 
 mode = function(m){
-	c.switchMode(m);
-}
-	
-
-
+	c.switchMode(m);}
+//------
+window.onload = function(){
+	c.switchMode('user');
+};
 </script>
-
-
 
 </body>
 </html>

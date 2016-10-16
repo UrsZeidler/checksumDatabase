@@ -11,7 +11,7 @@
 	"registerContentHashTrHash": "",
 	"registerUrlBlockNumber": -1,
 	"registerUrlTrHash": "",
-	"startUrl": "/test/contract-tests.html",
+	"startUrl": "/contract.html",
 	"title": "checksum",
 	"states": [
 		{
@@ -63,7 +63,7 @@
 							"contractId": "ChecksumDatabase",
 							"functionId": "ChecksumDatabase",
 							"gas": {
-								"value": "834096"
+								"value": "883446"
 							},
 							"gasAuto": true,
 							"gasPrice": {
@@ -74,9 +74,9 @@
 							"isFunctionCall": true,
 							"label": "ChecksumDatabase.ChecksumDatabase()",
 							"parameters": {
-								"_name": "test",
-								"_url": "test url",
-								"_description": "test description"
+								"_name": "Test Checksum",
+								"_url": "for",
+								"_description": "A Test description"
 							},
 							"saveStatus": true,
 							"sender": "cb73d9408c4720e230387d956eb0f829d8a4dd2c1055f96257167e14e7169074",

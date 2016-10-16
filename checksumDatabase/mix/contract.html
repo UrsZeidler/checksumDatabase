@@ -2,7 +2,7 @@
 <html>
 <head>
 <!--
-<script type='text/javascript' src="contractWeb3.js">
+<script type='text/javascript' src="js/contractWeb3.js">
 </script>
 -->
 
@@ -32,24 +32,35 @@
 .function_execution{}
 .function_parameter{}
 .function_result{}
+.eventRow{
+	display: table-row;
+	width: auto;
+}
+.eventValue{	
+	float: left; /*fix for  buggy browsers*/
+	display: table-column;
+}
 
 </style>
 </head>
 <body bgcolor='#E6E6FA'>
 	<h1>Sample Interface for contract</h1>
+<!--
 <div class="contract">ChecksumDatabase
 <div id="ChecksumDatabase_gui" ></div>
 </div>
 <div class="contract">test : ChecksumDatabase
 <div id="TestChecksumDatabase_gui" ></div>
 </div>
+-->
 <div class="contract">test : contract
 <div id="Contract-Gui" ></div>
 </div>
 <div id="eventLog" ></div>
 
 <!-- Start of user code custom_contracthtml --> 
-<a onclick="mode('e')"> e </a><a onclick="mode('manager')"> manager</a>
+	
+<a onclick="mode('e')">user</a> <a onclick="mode('manager')">maintainer</a>
 <!-- End of user code -->
 
 
@@ -57,6 +68,7 @@
 
 var c = new ContractPage('Contract-Gui');
 //Start of user code page_Contract_js_functions
+web3.eth.defaultAccount = web3.eth.accounts[0];
 c.db.addManager(contracts['ChecksumDatabase'].contract);
 //c.switchMode('user');
 c.db.guiFunction = this.displayUserGui;
