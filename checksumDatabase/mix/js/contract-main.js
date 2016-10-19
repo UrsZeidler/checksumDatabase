@@ -609,11 +609,11 @@ function ChecksumDatabaseDeployment(guiId){
 	* Construct ChecksumDatabase.
 	**/
 	this.deployChecksumDatabase_ChecksumDatabase_string_string_string = function(account,code,providedGas,_name,_url,_description){
-		var c = ChecksumDatabase.new(_name,_url,_description,{
-			from: account,
-			data: code,
-			gas:  providedGas
-		});
+//		var c = ChecksumDatabase.new(_name,_url,_description,{
+//			from: account,
+//			data: code,
+//			gas:  providedGas
+//		});
 		return c;
 	}
 
