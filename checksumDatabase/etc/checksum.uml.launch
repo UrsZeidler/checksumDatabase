@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="de.urszeidler.eclipse.solidity.laucher.core.launch.uml2solidity">
-<stringAttribute key="CONTRACT_FILE_HEADER" value="/**&#10;*(c) urs zeidler&#10;*&#10;**/"/>
+<stringAttribute key="CONTRACT_FILE_HEADER" value="/*&#10;*(c) urs zeidler&#10;*&#10;*/"/>
 <booleanAttribute key="GENERATE_ABI" value="true"/>
 <stringAttribute key="GENERATE_ABI_TARGET" value="/checksumDatabase/mix/abi"/>
 <booleanAttribute key="GENERATE_CONTRACT_FILES" value="true"/>

@@ -241,22 +241,22 @@ function ChecksumDatabaseGuiFactory() {
 	}
 
 
-//eventguis
+	//eventguis
 
 	/**
 	* Create a gui for the VersionChecksum event.
-    * @inner - the inner text
+    * @prefix - a prefix
+	* @blockHash - the bolckhash 
+	* @blockNumber - the number of the block
 	*/
 	this.createVersionChecksumLogDataGui = function(prefix, blockHash, blockNumber
 	,version	,checksum	,date	,id	) {
-		return '<ul class="dapp-account-list"><li > '
-        +'<a class="dapp-identicon dapp-small" style="background-image: url(identiconimage.png)"></a>'
-		+'<span>'+prefix+' ('+blockNumber+')</span>'
-        +'<span>'+version+'</span>'
-        +'<span>'+checksum+'</span>'
-        +'<span>'+date+'</span>'
-        +'<span>'+id+'</span>'
-        +' </li>';
+		return '<div class="eventRow">'
+        +'<div class="eventValue">'+version+'</div>'
+        +'<div class="eventValue">'+checksum+'</div>'
+        +'<div class="eventValue">'+date+'</div>'
+        +'<div class="eventValue">'+id+'</div>'
+        +' </div>';
 	}
 
 }//end guifactory
@@ -424,6 +424,7 @@ function ChecksumDatabaseManager(prefix,contract,containerId) {
 	this.containerId = containerId;
 	this.eventlogPrefix = '';
 	this.guiFunction = null;
+	this.eventCallback = null;
 	
 	/**
 	* adds the gui element to the given 'e' element
@@ -503,23 +504,12 @@ function ChecksumDatabaseManager(prefix,contract,containerId) {
 	this.watchEvents=function(){
 	var event_VersionChecksum = contract.VersionChecksum({},{fromBlock: 0});
 	var elp = this.eventlogPrefix;
+	var callback = this.eventCallback;
 	event_VersionChecksum.watch(function(error,result){
 	if(!error){
-		var e = document.getElementById(elp+'eventLog');
-		if(e==null){
-			console.log(elp+'eventLog');
-			return;
-		}
-		var elemDiv = document.createElement('div');
-		elemDiv.id= result.blockNumber +'event';
-		e.appendChild(elemDiv);
-		//console.log(result.address+ 'eventLog'+result.blockHash+' '+result.blockNumber+' '+result.args.name+' '+result.args.succesful+' ');
-		elemDiv.innerHTML = '<div class="eventRow">'
-        +'<dic class="eventValue">'+result.args.version+'</div>'
-        +'<dic class="eventValue">'+result.args.checksum+'</div>'
-        +'<dic class="eventValue">'+result.args.date+'</div>'
-        +'<dic class="eventValue">'+result.args.id+'</div>'
-		+ '</div>';
+		if(callback!=null)
+			callback(result);
+
 		}else
 			console.log(error);	
 	});
@@ -534,14 +524,16 @@ function ChecksumDatabaseGuiMananger(guiId){
 	this.prefix = guiId;
 	this.managers=new Array();	//[];		
 	this.guiFunction = null;
+	this.eventCallback = null;
 	
 	/**
 	* Add a contract to this manager.
-	* @namespace contract
+	* @contract the web3 contract instance
 	*/
 	this.addManager = function(contract) {
 		var m = new ChecksumDatabaseManager(contract.address,contract,this.prefix);
 		m.eventlogPrefix = this.prefix;
+		m.eventCallback = this.eventCallback;
 		m.watchEvents();
 		if(this.guiFunction!=null)
 			m.guiFunction = this.guiFunction;
@@ -608,14 +600,14 @@ function ChecksumDatabaseDeployment(guiId){
 	/**
 	* Construct ChecksumDatabase.
 	**/
-	this.deployChecksumDatabase_ChecksumDatabase_string_string_string = function(account,code,providedGas,_name,_url,_description){
+//	this.deployChecksumDatabase_ChecksumDatabase_string_string_string = function(account,code,providedGas,_name,_url,_description){
 //		var c = ChecksumDatabase.new(_name,_url,_description,{
 //			from: account,
 //			data: code,
 //			gas:  providedGas
 //		});
-		return c;
-	}
+//		return c;
+//	}
 
 //Start of user code ChecksumDatabase_deployment_js
 //TODO: implement

@@ -110,6 +110,7 @@ function TestChecksumDatabase(contract) {
 
 	//Test for ChecksumDatabase_addEntry_string_string
 	this.testChecksumDatabase_addEntry_string_string=function() {
+		//	var res = this.test_instance.addEntry( p__version, p__checksum);
 		//Start of user code test_ChecksumDatabase_addEntry_string_string
 		var p__version = 'testVersion';
 		var p__checksum = 'test checksum';
@@ -121,6 +122,7 @@ function TestChecksumDatabase(contract) {
 
 	//Test for ChecksumDatabase_changeOwner_address
 	this.testChecksumDatabase_changeOwner_address=function() {
+		//	var res = this.test_instance.changeOwner( p_newOwner);
 		//Start of user code test_ChecksumDatabase_changeOwner_address
 		var baseCount= this.model.getCount();
 		var p_newOwner = web3.eth.accounts[1];

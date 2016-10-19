@@ -17,6 +17,18 @@
 
 ### structs:
 
+ChecksumEntry
+
+
+#### ChecksumEntry properties
+
+name|type|visiblity|delegate|doc
+----|----|----|----|----
+version|string|public||
+checksum|string|public||
+date|uint|public||
+
+
 
 #### ChecksumDatabase properties
 
