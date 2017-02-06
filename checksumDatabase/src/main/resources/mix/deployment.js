@@ -2,8 +2,7 @@ console.log('Test for late init.');
 if (contracts===undefined) {
 	var contracts = {};
 	contracts['ChecksumDatabase'] = {};
-	contracts = {};
-	contracts['ChecksumDatabase'].address = "0xca5c183f834ee20911c3d04eeb98825860d4114e";
+	contracts['ChecksumDatabase'].address = "0x11c12dc2579d9c1cc9f773227238bc697f134054";
 	// init the contracts
 	contracts['ChecksumDatabase'].contract = ChecksumDatabaseContract.at(contracts['ChecksumDatabase'].address);
 }
