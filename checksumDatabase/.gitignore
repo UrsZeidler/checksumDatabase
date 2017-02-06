@@ -1,1 +1,7 @@
 /bin/
+/target/
+/database/
+/logs/
+/database-ropsten/
+/cachedDag/
+/privateIntegration/

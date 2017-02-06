@@ -1,0 +1,117 @@
+<!doctype>
+<html>
+<head>
+
+<!-- start of style -->
+<style>
+.contract {
+	border-style: solid;
+	border-width: 1px;
+	margin-bottom: 4px;
+	} 
+.contract_attributes{
+	border-style: solid;
+	border-width: 1px;
+	} 
+.Struct_Mapping{}
+.Value_Mapping{}
+.contract_attribute{}
+.contract_attribute_value{}
+.function_execution{}
+.function_parameter{
+	float: left;
+    width: 220px;
+	padding-top: 0.3em;
+}
+.function_input{
+	display : block;
+	margin-bottom: 0.8em;
+}
+.function_btn{}
+.function_result{}
+.eventRow{
+	display: table-row;
+	width: auto;
+}
+.eventValue{	
+	float: left; /*fix for  buggy browsers*/
+	display: table-column;
+}
+
+</style>
+</head>
+<body bgcolor='#E6E6FA'>
+	<h1>Sample Interface for contract</h1>
+<!-- gui for ChecksumDatabase_contract -->
+<div class="contract" id="ChecksumDatabase_contract">
+ChecksumDatabase:
+  <input type="text" id="ChecksumDatabase_address"> <button id="ChecksumDatabaseController.setAddress" onclick="ChecksumDatabaseController.setAddress()">change ChecksumDatabase Address</button>
+  <div class="contract_attributes" id="ChecksumDatabase_contract_attributes"> attributes:
+    <div class="contract_attribute" id="ChecksumDatabase_contract_attribute_name"> name:
+      <span class="contract_attribute_value" id="ChecksumDatabase_name_value"> </span>
+    </div>
+    <div class="contract_attribute" id="ChecksumDatabase_contract_attribute_url"> url:
+      <span class="contract_attribute_value" id="ChecksumDatabase_url_value"> </span>
+    </div>
+    <div class="contract_attribute" id="ChecksumDatabase_contract_attribute_description"> description:
+      <span class="contract_attribute_value" id="ChecksumDatabase_description_value"> </span>
+    </div>
+    <div class="contract_attribute" id="ChecksumDatabase_contract_attribute_owner"> owner:
+      <span class="contract_attribute_value" id="ChecksumDatabase_owner_value"> </span>
+    </div>
+    <div class="contract_attribute" id="ChecksumDatabase_contract_attribute_count"> count:
+      <span class="contract_attribute_value" id="ChecksumDatabase_count_value"> </span>
+    </div>
+
+<div class="Struct_Mapping" id="Struc_ChecksumDatabase_contract_attribute_entries">struc mapping  entries:
+		<input class="function_input" type="number" id="ChecksumDatabase_contract_attribute_entries_input">(uint)
+    	<div class="Struct_attribute" id="ChecksumDatabase_contract_attribute_entries_version"> version:
+      		<span class="Struct_attribute_value" id="ChecksumDatabase_entries_version_value"> </span>
+    	</div>
+    	<div class="Struct_attribute" id="ChecksumDatabase_contract_attribute_entries_checksum"> checksum:
+      		<span class="Struct_attribute_value" id="ChecksumDatabase_entries_checksum_value"> </span>
+    	</div>
+    	<div class="Struct_attribute" id="ChecksumDatabase_contract_attribute_entries_date"> date:
+      		<span class="Struct_attribute_value" id="ChecksumDatabase_entries_date_value"> </span>
+    	</div>
+  </div>
+    <button class="function_btn" id="ChecksumDatabase_updateAttributes" onclick="ChecksumDatabaseController._updateAttributes()">update ChecksumDatabase attributes</button>
+  </div>
+  <fieldset class="function_execution" id="ChecksumDatabase_contract_function_ChecksumDatabase_addEntry_string_string">
+<legend>addEntry</legend>
+	  <label class="function_parameter" for="ChecksumDatabase_addEntry_string_string__version">_version</label>
+		<input class="function_input" type="text" 
+          id="ChecksumDatabase_addEntry_string_string__version"
+		  placeholder="_version"/>
+	  <label class="function_parameter" for="ChecksumDatabase_addEntry_string_string__checksum">_checksum</label>
+		<input class="function_input" type="text" 
+          id="ChecksumDatabase_addEntry_string_string__checksum"
+		  placeholder="_checksum"/>
+	<button class="function_btn" id="ChecksumDatabaseController.ChecksumDatabase_addEntry_string_string" onclick="ChecksumDatabaseController.ChecksumDatabase_addEntry_string_string()">addEntry</button>
+	<div class="function_result" id="ChecksumDatabase_addEntry_string_string_res"></div>
+  </fieldset>
+  <fieldset class="function_execution" id="ChecksumDatabase_contract_function_ChecksumDatabase_changeOwner_address">
+<legend>changeOwner</legend>
+	  <label class="function_parameter" for="ChecksumDatabase_changeOwner_address_newOwner">newOwner</label>
+		<input class="function_input" type="text" 
+          id="ChecksumDatabase_changeOwner_address_newOwner"
+		  placeholder="newOwner"/>
+	<button class="function_btn" id="ChecksumDatabaseController.ChecksumDatabase_changeOwner_address" onclick="ChecksumDatabaseController.ChecksumDatabase_changeOwner_address()">changeOwner</button>
+	<div class="function_result" id="ChecksumDatabase_changeOwner_address_res"></div>
+  </fieldset>
+  <fieldset class="function_execution" id="ChecksumDatabase_contract_function_ChecksumDatabase_getEntry_uint">
+<legend>getEntry</legend>
+	  <label class="function_parameter" for="ChecksumDatabase_getEntry_uint_id">id</label>
+		<input class="function_input" type="number" 
+          id="ChecksumDatabase_getEntry_uint_id"
+		  placeholder="id"/>
+	<button class="function_btn" id="ChecksumDatabaseController.ChecksumDatabase_getEntry_uint" onclick="ChecksumDatabaseController.ChecksumDatabase_getEntry_uint()">getEntry</button>
+	<div class="function_result" id="ChecksumDatabase_getEntry_uint_res"></div>
+  </fieldset>
+
+</div>
+
+<div id="eventLog" ></div>
+</body>
+</html>
+

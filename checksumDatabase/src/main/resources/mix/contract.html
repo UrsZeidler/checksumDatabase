@@ -2,12 +2,12 @@
 <html>
 <head>
 <!--
-<script type='text/javascript' src="js/contractWeb3.js">
+<script type='text/javascript' src="../../../test/resources/mix/js/contractWeb3.js">
 </script>
 -->
 
 
-<script type='text/javascript' src="js/contract-main.js">
+<script type='text/javascript' src="../../../test/resources/mix/js/contract-main.js">
 </script>
 
 <!-- Start of user code custom_contract_scripts --> 
@@ -30,7 +30,16 @@
 .contract_attribute{}
 .contract_attribute_value{}
 .function_execution{}
-.function_parameter{}
+.function_parameter{
+	float: left;
+    width: 220px;
+	padding-top: 0.3em;
+}
+.function_input{
+	display : block;
+	margin-bottom: 0.8em;
+}
+.function_btn{}
 .function_result{}
 .eventRow{
 	display: table-row;
@@ -59,8 +68,7 @@
 <div id="eventLog" ></div>
 
 <!-- Start of user code custom_contracthtml --> 
-	
-<a onclick="mode('e')">user</a> <a onclick="mode('manager')">maintainer</a>
+
 <!-- End of user code -->
 
 
@@ -68,16 +76,8 @@
 
 var c = new ContractPage('Contract-Gui');
 //Start of user code page_Contract_js_functions
-web3.eth.defaultAccount = web3.eth.accounts[0];
-c.db.addManager(contracts['ChecksumDatabase'].contract);
-//c.switchMode('user');
-c.db.guiFunction = this.displayUserGui;
-
-
-mode = function(m){
-	c.switchMode(m);}
-
-	
+//web3.eth.defaultAccount = web3.eth.accounts[0] ;		
+//TODO: implement
 //End of user code
 c.createDefaultGui();
 

@@ -1,5 +1,5 @@
 /*
-*(c) urs zeidler
+*
 *
 */
 
@@ -21,7 +21,6 @@ contract ChecksumDatabase {
 	uint public count;
 	mapping (uint=>ChecksumEntry)public entries;
 	// Start of user code ChecksumDatabase.attributes
-	//TODO: implement
 	// End of user code
 	
 	modifier onlyOwner
@@ -53,8 +52,8 @@ contract ChecksumDatabase {
 	/*
 	* Add an entry to the database.
 	* 
-	* _version - The version the checksum belongs to.
-	* _checksum - The checksum of the version.
+	* _version -The version the checksum belongs to.
+	* _checksum -The checksum of the version.
 	*/
 	function addEntry(string _version,string _checksum) public  onlyOwner  {
 		//Start of user code ChecksumDatabase.function.addEntry_string_string
@@ -71,6 +70,17 @@ contract ChecksumDatabase {
 	function changeOwner(address newOwner) public  onlyOwner  {
 		//Start of user code ChecksumDatabase.function.changeOwner_address
 		owner = newOwner;
+		//End of user code
+	}
+	
+	
+	
+	function getEntry(uint id) public   constant returns (string _version,string _checksum,uint _date) {
+		//Start of user code ChecksumDatabase.function.getEntry_uint
+		_version = entries[id].version;
+		_checksum = entries[id].checksum;
+		_date = entries[id].date;
+		return;
 		//End of user code
 	}
 	

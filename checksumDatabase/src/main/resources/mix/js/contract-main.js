@@ -1,33 +1,43 @@
-// (c) urs zeidler
+// file header
 // contractVariable for ChecksumDatabase
 var ChecksumDatabaseContract = web3.eth.contract([
 {"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"type":"function"},
 {"constant":true,"inputs":[],"name":"url","outputs":[{"name":"","type":"string"}],"type":"function"},
 {"constant":true,"inputs":[],"name":"description","outputs":[{"name":"","type":"string"}],"type":"function"},
 {"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"type":"function"},
-{"constant":true,"inputs":[],"name":"count","outputs":[{"name":"","type":"uint"}],"type":"function"},
-{"constant": true,"inputs": [{"name": "","type": "uint"}],"name": "entries","outputs": [
+{"constant":true,"inputs":[],"name":"count","outputs":[{"name":"","type":"uint256"}],"type":"function"},
+{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "entries","outputs": [
 { "name": "version", "type": "string"}
 ,{ "name": "checksum", "type": "string"}
-,{ "name": "date", "type": "uint"}
+,{ "name": "date", "type": "uint256"}
 ],"type": "function"	},
-  {
-    "constant": false,
+{ "constant": false,
     "inputs": [{"name": "_version","type": "string"},{"name": "_checksum","type": "string"}],    
     "name": "addEntry",
     "outputs": [],
-    "type": "function"
-  }
-,  {
-    "constant": false,
+    "type": "function" }
+,{ "constant": false,
     "inputs": [{"name": "newOwner","type": "address"}],    
     "name": "changeOwner",
     "outputs": [],
-    "type": "function"
-  }
- ,
-  { "constant": true,
-    "inputs": [{"name": "version","type": "string"},{"name": "checksum","type": "string"},{"name": "date","type": "uint"},{"name": "id","type": "uint"}],    
+    "type": "function" }
+,
+  { "anonymous": false,
+    "inputs": 
+	[
+		{"indexed": false,
+		 "name": "version",
+         "type": "string"}
+,		{"indexed": false,
+		 "name": "checksum",
+         "type": "string"}
+,		{"indexed": false,
+		 "name": "date",
+         "type": "uint256"}
+,		{"indexed": false,
+		 "name": "id",
+         "type": "uint256"}
+	],    
     "name": "VersionChecksum",
     "type": "event"  }
 ]);   
@@ -68,6 +78,12 @@ this.contract = contract;
 	**/
 	this.getCount = function(){
 		return contract.count(); 
+	}
+	/**
+	* Get the mapped value for a key.
+	*/
+	this.getEntries=function(key) {
+		return contract.entries(key);
 	}
 	/**
 	* Call addEntry.
@@ -126,7 +142,6 @@ function ChecksumDatabaseGuiFactory() {
 +		'		      <div class="contract_attribute_value" id="'+this.prefix+'ChecksumDatabase_count_value"> </div>'
 +		'		    </div>'
 +		'		'
-+		'		<!--struct -->'
 +		'		<div class="Struct_Mapping" id="'+this.prefix+'Struc_ChecksumDatabase_contract_attribute_entries">struc mapping  entries:'
 +		'				<input type="number" id="'+this.prefix+'ChecksumDatabase_contract_attribute_entries_input">(uint)'
 +		'		    	<div class="Struct_attribute" id="'+this.prefix+'ChecksumDatabase_contract_attribute_entries_version"> version:'
@@ -213,8 +228,7 @@ function ChecksumDatabaseGuiFactory() {
 	* Create the gui for the entries struct element.
 	*/
 	this.createentriesStructGui=function() {
-		return 		'<!--struct -->'
-+		'		<div class="Struct_Mapping" id="'+this.prefix+'Struc_ChecksumDatabase_contract_attribute_entries">struc mapping  entries:'
+		return 		'<div class="Struct_Mapping" id="'+this.prefix+'Struc_ChecksumDatabase_contract_attribute_entries">struc mapping  entries:'
 +		'				<input type="number" id="'+this.prefix+'ChecksumDatabase_contract_attribute_entries_input">(uint)'
 +		'		    	<div class="Struct_attribute" id="'+this.prefix+'ChecksumDatabase_contract_attribute_entries_version"> version:'
 +		'		      		<div class="Struct_attribute_value" id="'+this.prefix+'ChecksumDatabase_entries_version_value"> </div>'
@@ -257,6 +271,22 @@ function ChecksumDatabaseGuiFactory() {
         +'<div class="eventValue">'+date+'</div>'
         +'<div class="eventValue">'+id+'</div>'
         +' </div>';
+	}
+	/**
+	* Create the gui for the function Struc ChecksumDatabase-entries.
+	*/
+	this.createStruc_ChecksumDatabase_contract_attribute_entriesGui=function(struct) {
+		return '<div class="Struct_Mapping" id='+this.prefix+'"Struc_ChecksumDatabase_contract_attribute_entries">'
+    		+'<div class="Struct_attribute" id='+this.prefix+'"ChecksumDatabase_contract_attribute_entries_version"> version:'
+      		+'	<div class="Struct_attribute_value" id='+this.prefix+'"ChecksumDatabase_entries_version_value">'+struct.version()+'</div>'
+    		+'</div>'
+    		+'<div class="Struct_attribute" id='+this.prefix+'"ChecksumDatabase_contract_attribute_entries_checksum"> checksum:'
+      		+'	<div class="Struct_attribute_value" id='+this.prefix+'"ChecksumDatabase_entries_checksum_value">'+struct.checksum()+'</div>'
+    		+'</div>'
+    		+'<div class="Struct_attribute" id='+this.prefix+'"ChecksumDatabase_contract_attribute_entries_date"> date:'
+      		+'	<div class="Struct_attribute_value" id='+this.prefix+'"ChecksumDatabase_entries_date_value">'+struct.date()+'</div>'
+    		+'</div>'
+  		+'</div>';
 	}
 
 }//end guifactory
@@ -301,6 +331,7 @@ function ChecksumDatabaseController() {
 		if(btn!=undefined)
 			btn.onclick = this.ChecksumDatabase_changeOwner_address;
 		else console.log('ChecksumDatabase_changeOwner_address widget not bound');
+
 	}
 
 	/**
@@ -355,7 +386,7 @@ function ChecksumDatabaseController() {
 		var e = document.getElementById(self.prefix+'ChecksumDatabase_contract_attribute_entries_input');
 		if(e!=null){
 			var _key = e.value;
-			if(_key=='') return;
+			if(_key!=''){
 			var entries_res = self.instance.entries(_key);
 			if(entries_res!=null){
 			var e1 = document.getElementById(self.prefix+'ChecksumDatabase_entries_version_value');
@@ -367,7 +398,7 @@ function ChecksumDatabaseController() {
 			var e1 = document.getElementById(self.prefix+'ChecksumDatabase_entries_date_value');
 			if(e1!=null)	
 				e1.innerText = entries_res[2];
-			}}
+			}}}
 	}
 
 	//call functions
@@ -404,7 +435,6 @@ function ChecksumDatabaseController() {
 	}
 	
 //delegated calls
-
 }// end controller	
 
 /**
@@ -424,7 +454,7 @@ function ChecksumDatabaseManager(prefix,contract,containerId) {
 	this.containerId = containerId;
 	this.eventlogPrefix = '';
 	this.guiFunction = null;
-	this.eventCallback = null;
+	this.eventVersionChecksum = null;
 	
 	/**
 	* adds the gui element to the given 'e' element
@@ -502,9 +532,9 @@ function ChecksumDatabaseManager(prefix,contract,containerId) {
 	* The events are stored in an element with the id this.eventlogPrefix+'eventLog'.
 	**/
 	this.watchEvents=function(){
-	var event_VersionChecksum = contract.VersionChecksum({},{fromBlock: 0});
+	var event_VersionChecksum = this.getContract().VersionChecksum({},{fromBlock: 0});
 	var elp = this.eventlogPrefix;
-	var callback = this.eventCallback;
+	var callback = this.eventVersionChecksum;
 	event_VersionChecksum.watch(function(error,result){
 	if(!error){
 		if(callback!=null)
@@ -524,7 +554,8 @@ function ChecksumDatabaseGuiMananger(guiId){
 	this.prefix = guiId;
 	this.managers=new Array();	//[];		
 	this.guiFunction = null;
-	this.eventCallback = null;
+	this.eventVersionChecksum = null;
+	this.managerMap = {};
 	
 	/**
 	* Add a contract to this manager.
@@ -533,12 +564,12 @@ function ChecksumDatabaseGuiMananger(guiId){
 	this.addManager = function(contract) {
 		var m = new ChecksumDatabaseManager(contract.address,contract,this.prefix);
 		m.eventlogPrefix = this.prefix;
-		m.eventCallback = this.eventCallback;
+		m.eventVersionChecksum = this.eventVersionChecksum;
 		m.watchEvents();
 		if(this.guiFunction!=null)
 			m.guiFunction = this.guiFunction;
 		this.managers.push(m);
-		//manager.addGui();
+		this.managerMap[contract.address] = m;
 	}
 
 	/**
@@ -596,26 +627,37 @@ function ChecksumDatabaseGuiMananger(guiId){
 * Each constructor is available.
 **/
 function ChecksumDatabaseDeployment(guiId){
+	this.prefix = guiId;
+//Start of user code ChecksumDatabase_deployment_attributes_js
+//TODO: implement
+//End of user code
+
 
 	/**
 	* Construct ChecksumDatabase.
 	**/
-//	this.deployChecksumDatabase_ChecksumDatabase_string_string_string = function(account,code,providedGas,_name,_url,_description){
-//		var c = ChecksumDatabase.new(_name,_url,_description,{
+	this.deployChecksumDatabase_ChecksumDatabase_string_string_string = function(account, code, providedGas, _name, _url, _description){
+//		var c = ChecksumDatabase.new( _name, _url, _description,{
 //			from: account,
 //			data: code,
 //			gas:  providedGas
 //		});
-//		return c;
-//	}
+		return c;
+	}
+	
+	/**
+	* The default deployer function.
+	**/
+	this.deployDefault = function(){
+		//Start of user code ChecksumDatabase_deployDefault
+		//TODO: implement
+		//End of user code
+	}
 
 //Start of user code ChecksumDatabase_deployment_js
 //TODO: implement
 //End of user code
 }
-//Start of user code custom_ChecksumDatabase_js
-//TODO: implement
-//End of user code
 
 /**
 * A class to manage a single page dapp.
@@ -681,3 +723,7 @@ this.switchMode=function(mode){
 	//End of user code
 
 }// end of ContractPage
+
+//Start of user code Contract_custom_functions
+		//TODO: implement
+//End of user code

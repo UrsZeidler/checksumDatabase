@@ -10,6 +10,7 @@
 	constructor ChecksumDatabase(string _name,string _url,string _description)
 	function addEntry(string _version,string _checksum) public  onlyOwner 
 	function changeOwner(address newOwner) public  onlyOwner 
+	function getEntry(uint id) public   constant returns (string _version,string _checksum,uint _date)
 
 
 
@@ -34,7 +35,7 @@ date|uint|public||
 
 name|type|visiblity|delegate|doc
 ----|----|----|----|----
-name|string|public||
+name|string|public||The name of the tracked product.
 url|string|public||
 description|string|public||
 owner|address|public||
@@ -68,6 +69,16 @@ _checksum|string|in|The checksum of the version.
 name|type|direction|doc
 ----|----|----|----
 newOwner|address|in|
+
+#### ChecksumDatabase.getEntry(uint id) public   constant returns (string _version,string _checksum,uint _date)
+
+
+name|type|direction|doc
+----|----|----|----
+id|uint|in|
+_version|string|return|
+_checksum|string|return|
+_date|uint|return|
 
 #### event VersionChecksum
 

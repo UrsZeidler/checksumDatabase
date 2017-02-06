@@ -83,6 +83,10 @@
           <element xmi:type="uml:Operation" href="checksum.uml#_T4IxcGbyEeaDkvzeY39u5w"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_T4c6gWbyEeaDkvzeY39u5w"/>
         </children>
+        <children xmi:type="notation:Shape" xmi:id="_afip4KNkEeaZWsGV4BiK-A" type="Operation_ClassOperationLabel">
+          <element xmi:type="uml:Operation" href="checksum.uml#_aVhLMKNkEeaZWsGV4BiK-A"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_afip4aNkEeaZWsGV4BiK-A"/>
+        </children>
         <styles xmi:type="notation:TitleStyle" xmi:id="_NVvGVmbwEeaDkvzeY39u5w"/>
         <styles xmi:type="notation:SortingStyle" xmi:id="_NVvGV2bwEeaDkvzeY39u5w"/>
         <styles xmi:type="notation:FilteringStyle" xmi:id="_NVvGWGbwEeaDkvzeY39u5w"/>
