@@ -12,7 +12,7 @@
 		Release ziped update site.
     </description>
 	<property name="out.path" value="out" />
-	<property name="git.repo.path" value="UrsZeidler/uml2solidity"/>
+	<property name="git.repo.path" value="UrsZeidler/checksumDatabase"/>
 
 	<!-- - - - - - - - - - - - - - - - - - 
           target: create.release  
@@ -28,7 +28,7 @@
 		<property name="strip-start">"upload_url": "</property>
 
 		
-		<fileset id="afileset" dir="." includes="*.zip"/>
+		<fileset id="afileset" dir="target" includes="*.zip"/>
 		<pathconvert property="result" refid="afileset" />
 		<echo>file to send : ${result}</echo>
 
