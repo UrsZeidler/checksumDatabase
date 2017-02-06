@@ -46,7 +46,7 @@
 <stringAttribute key="GENERATION_TARGET" value="/checksumDatabase/src/main/resources/mix"/>
 <stringAttribute key="GENERATION_TARGET_DOC" value="/checksumDatabase/doc"/>
 <stringAttribute key="JS_FILE_HEADER" value="// file header"/>
-<booleanAttribute key="enable_version" value="false"/>
+<booleanAttribute key="enable_version" value="true"/>
 <stringAttribute key="modelUri" value="/checksumDatabase/model/checksum.uml"/>
 <stringAttribute key="version_pragma" value="pragma solidity ^0.4.0;"/>
 </launchConfiguration>

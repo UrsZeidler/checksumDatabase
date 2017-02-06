@@ -2,7 +2,7 @@
 *
 *
 */
-
+pragma solidity ^0.4.0;
 
 
 
@@ -26,7 +26,7 @@ contract ChecksumDatabase {
 	modifier onlyOwner
 	{
 	    if(msg.sender!=owner) throw;
-	    _
+	    _;
 	}
 	
 	

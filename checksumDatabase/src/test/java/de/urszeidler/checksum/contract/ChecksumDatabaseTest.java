@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import de.urszeidler.checksum.contract.ChecksumDatabase.*;
 
+
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
