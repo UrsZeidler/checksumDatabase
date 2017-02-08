@@ -8,16 +8,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.adridadou.ethereum.EthereumFacade;
-import org.adridadou.ethereum.blockchain.BlockchainConfig;
-import org.adridadou.ethereum.blockchain.BlockchainConfig.Builder;
-import org.adridadou.ethereum.blockchain.TestConfig;
-import org.adridadou.ethereum.provider.EthereumFacadeProvider;
-import org.adridadou.ethereum.provider.EthereumFacadeRpcProvider;
-import org.adridadou.ethereum.provider.EthereumJConfigs;
-import org.adridadou.ethereum.provider.InfuraMainEthereumFacadeProvider;
-import org.adridadou.ethereum.provider.InfuraRopstenEthereumFacadeProvider;
-import org.adridadou.ethereum.provider.PrivateEthereumFacadeProvider;
-import org.adridadou.ethereum.provider.PrivateNetworkConfig;
+import org.adridadou.ethereum.ethj.BlockchainConfig;
+import org.adridadou.ethereum.ethj.TestConfig;
+import org.adridadou.ethereum.ethj.provider.EthereumFacadeProvider;
+import org.adridadou.ethereum.ethj.provider.EthereumJConfigs;
+import org.adridadou.ethereum.ethj.provider.PrivateEthereumFacadeProvider;
+import org.adridadou.ethereum.ethj.provider.PrivateNetworkConfig;
+import org.adridadou.ethereum.rpc.provider.EthereumFacadeRpcProvider;
+import org.adridadou.ethereum.rpc.provider.InfuraMainEthereumFacadeProvider;
+import org.adridadou.ethereum.rpc.provider.InfuraRopstenEthereumFacadeProvider;
 import org.adridadou.ethereum.values.EthAccount;
 import org.adridadou.ethereum.values.EthAddress;
 import org.adridadou.ethereum.values.EthValue;
@@ -92,17 +91,17 @@ public class EthereumInstance{
 		String property = System.getProperty("EthereumFacadeProvider");
 		if(property!=null){
 			if (property.equalsIgnoreCase("main")) {
-				Builder mainNet = EthereumJConfigs.mainNet();				
+				BlockchainConfig.Builder mainNet = EthereumJConfigs.mainNet();				
 				//Start of user code for setup the main chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(mainNet).create();
 			}else if (property.equalsIgnoreCase("test")) {
-				Builder testnet = EthereumJConfigs.etherCampTestnet();
+				BlockchainConfig.Builder testnet = EthereumJConfigs.etherCampTestnet();
 				//Start of user code for setup the test chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(testnet).create();
 			}else if (property.equalsIgnoreCase("ropsten")) {
-				Builder ropsten = EthereumJConfigs.ropsten();
+				BlockchainConfig.Builder ropsten = EthereumJConfigs.ropsten();
 				//Start of user code for setup the ropsten chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(ropsten).create();
@@ -128,7 +127,7 @@ public class EthereumInstance{
 				//End of user code
 				ethereum = new PrivateEthereumFacadeProvider().create(config);
 			}else if (property.equalsIgnoreCase("custom")){
-				Builder config = BlockchainConfig.builder();
+				BlockchainConfig.Builder config = BlockchainConfig.builder();
 				//Start of user code for setup the custom chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(config).create();
