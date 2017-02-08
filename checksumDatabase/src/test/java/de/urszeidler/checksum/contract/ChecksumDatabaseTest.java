@@ -57,7 +57,7 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 	public void prepareTest() throws Exception {
 		//Start of user code prepareTest
 		initTest();
-		File contractSrc = new File(this.getClass().getResource("/mix/contract.sol").toURI());
+		File contractSrc = new File(this.getClass().getResource("/combined.json").toURI());
 		contractSource = SoliditySource.from(contractSrc);
 		createFixture();
 		// End of user code
