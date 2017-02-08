@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -155,9 +156,10 @@ public class ContractDeployer {
 	 */
 	public CompiledContract compiledContractChecksumDatabase() throws InterruptedException, ExecutionException {
 		CompiledContract compiledContract = null;
-		if (compiledContracts == null)
-			compiledContract = ethereum.compile(contractSource, "ChecksumDatabase").get();
-		else {
+		if (compiledContracts == null){
+			Map<String, CompiledContract> contracts = ethereum.compile(contractSource).get();
+			compiledContract = contracts.get("ChecksumDatabase");
+		} else {
 			ContractMetadata contractMetadata = compiledContracts.contracts.get("ChecksumDatabase");
 			if (contractMetadata == null)
 				throw new IllegalArgumentException("Contract code for 'ChecksumDatabase' not found");

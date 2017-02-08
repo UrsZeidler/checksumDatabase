@@ -36,7 +36,6 @@ import de.urszeidler.checksum.contract.ReturnGetEntry_string_string_uint;
  *
  */
 public class ChecksumManager {
-
 	private EthereumFacade ethereum;
 	private ContractDeployer deployer;
 	private de.urszeidler.checksum.EthereumInstance.DeployDuo<ChecksumDatabase> manager;
@@ -134,7 +133,7 @@ public class ChecksumManager {
 				e.printStackTrace();
 			}
 
-			EthereumInstance.getInstance().getEthereum().shutdown();
+//			EthereumInstance.getInstance().getEthereum().shutdown();
 		} catch (ParseException e1) {
 			System.out.println(e1.getMessage());
 			printHelp(options);
