@@ -22,6 +22,8 @@ public interface ChecksumDatabase{
 	org.adridadou.ethereum.values.EthAddress owner();
 	
 	Integer count();
+	
+	ChecksumDatabaseChecksumEntry entries(Integer key);	
 
 	/**
 	* Add an entry to the database.
