@@ -10,7 +10,7 @@
 		<dependency>
 			<groupId>org.adridadou</groupId>
 			<artifactId>eth-contract-api</artifactId>
-			<version>0.16</version>
+			<version>0.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

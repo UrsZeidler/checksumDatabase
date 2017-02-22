@@ -10,13 +10,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.adridadou.ethereum.EthereumFacade;
 import org.adridadou.ethereum.ethj.BlockchainConfig;
 import org.adridadou.ethereum.ethj.TestConfig;
-import org.adridadou.ethereum.ethj.provider.EthereumFacadeProvider;
-import org.adridadou.ethereum.ethj.provider.EthereumJConfigs;
-import org.adridadou.ethereum.ethj.provider.PrivateEthereumFacadeProvider;
-import org.adridadou.ethereum.ethj.provider.PrivateNetworkConfig;
-import org.adridadou.ethereum.rpc.provider.EthereumFacadeRpcProvider;
-import org.adridadou.ethereum.rpc.provider.InfuraMainEthereumFacadeProvider;
-import org.adridadou.ethereum.rpc.provider.InfuraRopstenEthereumFacadeProvider;
+import org.adridadou.ethereum.provider.EthereumFacadeProvider;
+import org.adridadou.ethereum.provider.EthereumJConfigs;
+import org.adridadou.ethereum.provider.PrivateEthereumFacadeProvider;
+import org.adridadou.ethereum.provider.PrivateNetworkConfig;
 import org.adridadou.ethereum.values.EthAccount;
 import org.adridadou.ethereum.values.EthAddress;
 import org.adridadou.ethereum.values.EthValue;
@@ -91,31 +88,33 @@ public class EthereumInstance{
 		String property = System.getProperty("EthereumFacadeProvider");
 		if(property!=null){
 			if (property.equalsIgnoreCase("main")) {
-				BlockchainConfig.Builder mainNet = EthereumJConfigs.mainNet();				
+				BlockchainConfig mainNet = EthereumJConfigs.mainNet();				
 				//Start of user code for setup the main chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(mainNet).create();
 			}else if (property.equalsIgnoreCase("test")) {
-				BlockchainConfig.Builder testnet = EthereumJConfigs.etherCampTestnet();
+				BlockchainConfig testnet = EthereumJConfigs.etherCampTestnet();
 				//Start of user code for setup the test chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(testnet).create();
 			}else if (property.equalsIgnoreCase("ropsten")) {
-				BlockchainConfig.Builder ropsten = EthereumJConfigs.ropsten();
+				BlockchainConfig ropsten = EthereumJConfigs.ropsten();
 				//Start of user code for setup the ropsten chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(ropsten).create();
 			}else if (property.equalsIgnoreCase("InfuraRopsten")) {
 				String apiKey = System.getProperty("apiKey");
-				ethereum = InfuraRopstenEthereumFacadeProvider.create(new InfuraKey(apiKey));
+				ethereum = EthereumFacadeProvider.forInfura(new InfuraKey(apiKey)).createRopsten();// new InfuraRopstenEthereumFacadeProvider.create(new InfuraKey(apiKey));
 			}else if (property.equalsIgnoreCase("InfuraMain")) {
 				String apiKey = System.getProperty("apiKey");
-				ethereum = new InfuraMainEthereumFacadeProvider().create(new InfuraKey(apiKey));
+				ethereum = EthereumFacadeProvider.forInfura(new InfuraKey(apiKey)).createMain();//new InfuraMainEthereumFacadeProvider().create(new InfuraKey(apiKey));
 			}else if (property.equalsIgnoreCase("rpc")) {
-				EthereumFacadeRpcProvider rcp = new EthereumFacadeRpcProvider();
+//				EthereumFacadeRpcProvider rcp = new EthereumFacadeRpcProvider();
 				String url = System.getProperty("rpc-url");
 				String chainId = System.getProperty("chain-id");
-				ethereum = rcp.create(url, new ChainId((byte) Integer.parseInt(chainId)));
+//				ethereum = rcp.create(url, new ChainId((byte) Integer.parseInt(chainId)));
+				ethereum = EthereumFacadeProvider.forRemoteNode(url, new ChainId((byte) Integer.parseInt(chainId)));
+
 			}else if (property.equalsIgnoreCase("private")){
 				PrivateNetworkConfig config = PrivateNetworkConfig.config();
 				//Start of user code for setup the private chain
@@ -127,7 +126,7 @@ public class EthereumInstance{
 				//End of user code
 				ethereum = new PrivateEthereumFacadeProvider().create(config);
 			}else if (property.equalsIgnoreCase("custom")){
-				BlockchainConfig.Builder config = BlockchainConfig.builder();
+				BlockchainConfig config = BlockchainConfig.builder();
 				//Start of user code for setup the custom chain
 				//End of user code
 				ethereum = EthereumFacadeProvider.forNetwork(config).create();

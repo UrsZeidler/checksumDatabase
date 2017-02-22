@@ -298,7 +298,7 @@ public class ChecksumManager {
 		if (property != null && (property.equalsIgnoreCase("rpc") || property.equalsIgnoreCase("ropsten")
 				|| property.equalsIgnoreCase("InfuraRopsten"))) {
 
-			ethereum.events().onReady();
+//			ethereum.events().onReady();
 
 			millis = 2000L;
 		} else if (property != null && property.equalsIgnoreCase("private")) {
