@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 @Suite.SuiteClasses({
 ChecksumDatabaseTest.class
 //Start of user code customTests    
+,de.urszeidler.checksum.deployer.ChecksumManagerTest.class
 //End of user code
 })
 public class AllContractTestSuite {
