@@ -284,6 +284,8 @@ public class ChecksumManager {
 		System.out.println(
 				"Creating a new ChecksumDatabase: name=" + _name + " url=" + _url + " description=" + _description);
 		manager = deployer.createChecksumDatabase(sender, _name, _url, _description);
+		
+//		ethereum.publishMetadataToSwarm(deployer.compiledContractChecksumDatabase());
 		listChecksumData(manager.contractAddress.withLeading0x());
 	}
 
