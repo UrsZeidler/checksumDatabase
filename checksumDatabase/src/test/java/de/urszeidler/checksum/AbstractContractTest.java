@@ -73,6 +73,7 @@ public abstract class AbstractContractTest {
 				
 			} else if (property.equalsIgnoreCase("private")) {
 				sender = new EthAccount(ECKey.fromPrivate(BigInteger.valueOf(100000L)));
+				senderAddress = sender.getAddress();
 			}
 
 		if (sender == null){// the account for the standalone blockchain
