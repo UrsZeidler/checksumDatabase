@@ -299,7 +299,7 @@ public class ChecksumManager {
 		// testnetProvider
 		if (property != null && (property.equalsIgnoreCase("rpc") || property.equalsIgnoreCase("ropsten")
 				|| property.equalsIgnoreCase("InfuraRopsten"))) {
-
+			//needed to release the lock on the future
 			ethereum.events().onReady();
 
 			millis = 2000L;
