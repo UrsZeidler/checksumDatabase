@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 import org.adridadou.ethereum.EthereumFacade;
 import org.adridadou.ethereum.keystore.FileSecureKey;
 import org.adridadou.ethereum.keystore.SecureKey;
+import org.adridadou.ethereum.swarm.SwarmHash;
 import org.adridadou.ethereum.values.EthAccount;
 import org.adridadou.ethereum.values.EthAddress;
 import org.adridadou.ethereum.values.EthValue;
@@ -54,6 +55,7 @@ public class ChecksumManager {
 	private long millis;
 	private EthAccount sender;
 	private String algorithm = "MD5";
+	private boolean publishSwarm = false;
 
 	private interface DoAndWaitOneTime<T> {
 		boolean isDone();
@@ -284,6 +286,10 @@ public class ChecksumManager {
 		System.out.println(
 				"Creating a new ChecksumDatabase: name=" + _name + " url=" + _url + " description=" + _description);
 		manager = deployer.createChecksumDatabase(sender, _name, _url, _description);
+		if(publishSwarm){
+			SwarmHash publishMetadataToSwarm = ethereum.publishMetadataToSwarm(deployer.compiledContractChecksumDatabase());
+			System.out.println("published to swarm:"+publishMetadataToSwarm);
+		}
 		listChecksumData(manager.contractAddress.withLeading0x());
 	}
 
