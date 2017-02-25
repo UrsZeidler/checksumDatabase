@@ -62,20 +62,18 @@ public abstract class AbstractContractTest {
 	protected static void initTest() throws Exception {
 		// Start of user code AbstractContractTest.initTest
 
-		String property = System.getProperty("EthereumFacadeProvider");
-		if (property != null)
-			if (property.equalsIgnoreCase("ropsten") ||property.equalsIgnoreCase("rpc")|| property.equalsIgnoreCase("InfuraRopsten")) {
-				SecureKey a = AccountProvider.fromKeystore(new File("/home/urs/.ethereum/testnet/keystore/UTC--2015-12-15T13-55-38.006995319Z--ba7b29b63c00dff8614f8d8a6bf34e94e853b2d3"));
-				sender = a.decode(System.getProperty("keyPass"));
-				senderAddress = sender.getAddress();
+		String property = System.getProperty(EthereumInstance.PROP_ETHEREUM_FACADE_PROVIDER);
+		if (EthereumInstance.ALL_TESTNET.contains(property)) {
+			SecureKey a = AccountProvider.fromKeystore(new File("/home/urs/.ethereum/testnet/keystore/UTC--2015-12-15T13-55-38.006995319Z--ba7b29b63c00dff8614f8d8a6bf34e94e853b2d3"));
+			sender = a.decode(System.getProperty("keyPass"));
+			senderAddress = sender.getAddress();
 
-				
-				
-			} else if (property.equalsIgnoreCase("private")) {
-				sender = new EthAccount(ECKey.fromPrivate(BigInteger.valueOf(100000L)));
-			}
+		} else if (EthereumInstance.EI_PRIVATE.equalsIgnoreCase(property)) {
+			sender = new EthAccount(ECKey.fromPrivate(BigInteger.valueOf(100000L)));
+			senderAddress = sender.getAddress();
+		}
 
-		if (sender == null){// the account for the standalone blockchain
+		if (sender == null) {// the account for the standalone blockchain
 			sender = new EthAccount(
 					ECKey.fromPrivate(Hex.decode("3ec771c31cac8c0dba77a69e503765701d3c2bb62435888d4ffa38fed60c445c")));
 			senderAddress = sender.getAddress();
@@ -122,8 +120,10 @@ public abstract class AbstractContractTest {
 
 	// Start of user code AbstractContractTest.customMethods
 	protected boolean supportEvents() {
-		String property = System.getProperty("EthereumFacadeProvider");
-		return "private".equalsIgnoreCase(property)||"main".equalsIgnoreCase(property)||"ropsten".equals(property);
+		String property = System.getProperty(EthereumInstance.PROP_ETHEREUM_FACADE_PROVIDER);
+		return EthereumInstance.EI_PRIVATE.equalsIgnoreCase(property)
+				||EthereumInstance.EI_MAIN.equalsIgnoreCase(property)
+				||EthereumInstance.EI_ROPSTEN.equals(property);
 	}
 	// End of user code
 }

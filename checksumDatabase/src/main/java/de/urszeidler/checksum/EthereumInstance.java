@@ -4,6 +4,7 @@ package de.urszeidler.checksum;
 
 
 import java.math.BigInteger;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,6 +25,8 @@ import org.adridadou.ethereum.values.config.ChainId;
 import org.adridadou.ethereum.values.config.InfuraKey;
 import org.ethereum.crypto.ECKey;
 
+import com.google.common.collect.Sets;
+
 
 //End of user code
 
@@ -33,6 +36,22 @@ import org.ethereum.crypto.ECKey;
  * The created instance is controllable by system a system property 'EthereumFacadeProvider'.
  */
 public class EthereumInstance{
+	public static final String PROP_CHAIN_ID = "chain-id";
+	public static final String PROP_RPC_URL = "rpc-url";
+	public static final String PROP_API_KEY = "apiKey";
+	public static final String PROP_ETHEREUM_FACADE_PROVIDER = "EthereumFacadeProvider";
+	//the different access technologies
+	public static String EI_MAIN = "main";
+	public static String EI_TEST = "test";
+	public static String EI_ROPSTEN = "ropsten";
+	public static String EI_PRIVATE = "private";
+	public static String EI_RPC = "rpc";
+	public static String EI_INFURA_ROPSTEN = "InfuraRopsten";
+	public static String EI_INFURA_MAIN = "InfuraMain";
+	public static String EI_CUSTOM = "custom";
+	
+	public static Set<String> ALL_RPC = Sets.newHashSet(EI_RPC,EI_INFURA_MAIN,EI_INFURA_ROPSTEN);
+	public static Set<String> ALL_TESTNET = Sets.newHashSet(EI_ROPSTEN,EI_INFURA_ROPSTEN);
 
 	private static EthereumInstance instance;
 	private static Lock instanceLock = new ReentrantLock();
@@ -88,55 +107,53 @@ public class EthereumInstance{
 	 * @throws Exception 
 	 */
 	private void setup() throws Exception {
-		String property = System.getProperty("EthereumFacadeProvider");
-		if(property!=null){
-			if (property.equalsIgnoreCase("main")) {
-				BlockchainConfig.Builder mainNet = EthereumJConfigs.mainNet();				
-				//Start of user code for setup the main chain
-				//End of user code
-				ethereum = EthereumFacadeProvider.forNetwork(mainNet).create();
-			}else if (property.equalsIgnoreCase("test")) {
-				BlockchainConfig.Builder testnet = EthereumJConfigs.etherCampTestnet();
-				//Start of user code for setup the test chain
-				//End of user code
-				ethereum = EthereumFacadeProvider.forNetwork(testnet).create();
-			}else if (property.equalsIgnoreCase("ropsten")) {
-				BlockchainConfig.Builder ropsten = EthereumJConfigs.ropsten();
-				//Start of user code for setup the ropsten chain
-				//End of user code
-				ethereum = EthereumFacadeProvider.forNetwork(ropsten).create();
-			}else if (property.equalsIgnoreCase("InfuraRopsten")) {
-				String apiKey = System.getProperty("apiKey");
-				ethereum = InfuraRopstenEthereumFacadeProvider.create(new InfuraKey(apiKey));
-			}else if (property.equalsIgnoreCase("InfuraMain")) {
-				String apiKey = System.getProperty("apiKey");
-				ethereum = new InfuraMainEthereumFacadeProvider().create(new InfuraKey(apiKey));
-			}else if (property.equalsIgnoreCase("rpc")) {
-				EthereumFacadeRpcProvider rcp = new EthereumFacadeRpcProvider();
-				String url = System.getProperty("rpc-url");
-				String chainId = System.getProperty("chain-id");
-				ethereum = rcp.create(url, new ChainId((byte) Integer.parseInt(chainId)));
-			}else if (property.equalsIgnoreCase("private")){
-				PrivateNetworkConfig config = PrivateNetworkConfig.config();
-				//Start of user code for setup the private chain
-				config
-                //
-                .initialBalance(new EthAccount(ECKey.fromPrivate(BigInteger.valueOf(100000L))), EthValue.ether(10L))
-                ;
+		String property = System.getProperty(PROP_ETHEREUM_FACADE_PROVIDER);
+		if (EI_MAIN.equalsIgnoreCase(property)) {
+			BlockchainConfig.Builder mainNet = EthereumJConfigs.mainNet();
+			// Start of user code for setup the main chain
+			// End of user code
+			ethereum = EthereumFacadeProvider.forNetwork(mainNet).create();
+		} else if (EI_TEST.equalsIgnoreCase(property)) {
+			BlockchainConfig.Builder testnet = EthereumJConfigs.etherCampTestnet();
+			// Start of user code for setup the test chain
+			// End of user code
+			ethereum = EthereumFacadeProvider.forNetwork(testnet).create();
+		} else if (EI_ROPSTEN.equalsIgnoreCase(property)) {
+			BlockchainConfig.Builder ropsten = EthereumJConfigs.ropsten();
+			// Start of user code for setup the ropsten chain
+			// End of user code
+			ethereum = EthereumFacadeProvider.forNetwork(ropsten).create();
+		} else if (EI_INFURA_ROPSTEN.equalsIgnoreCase(property)) {
+			String apiKey = System.getProperty(PROP_API_KEY);
+			ethereum = InfuraRopstenEthereumFacadeProvider.create(new InfuraKey(apiKey));
+		} else if (EI_INFURA_ROPSTEN.equalsIgnoreCase(property)) {
+			String apiKey = System.getProperty(PROP_API_KEY);
+			ethereum = new InfuraMainEthereumFacadeProvider().create(new InfuraKey(apiKey));
+		} else if (EI_RPC.equalsIgnoreCase(property)) {
+			EthereumFacadeRpcProvider rcp = new EthereumFacadeRpcProvider();
+			String url = System.getProperty(PROP_RPC_URL);
+			String chainId = System.getProperty(PROP_CHAIN_ID);
+			ethereum = rcp.create(url, new ChainId((byte) Integer.parseInt(chainId)));
+		} else if (EI_PRIVATE.equalsIgnoreCase(property)) {
+			PrivateNetworkConfig config = PrivateNetworkConfig.config();
+			// Start of user code for setup the private chain
+			config.reset(true)
+			.initialBalance(new EthAccount(ECKey.fromPrivate(BigInteger.valueOf(100000L))),
+					EthValue.ether(10L));
 
-				//End of user code
-				ethereum = new PrivateEthereumFacadeProvider().create(config);
-			}else if (property.equalsIgnoreCase("custom")){
-				BlockchainConfig.Builder config = BlockchainConfig.builder();
-				//Start of user code for setup the custom chain
-				//End of user code
-				ethereum = EthereumFacadeProvider.forNetwork(config).create();
-			}
+			// End of user code
+			ethereum = new PrivateEthereumFacadeProvider().create(config);
+		} else if (EI_CUSTOM.equalsIgnoreCase(property)) {
+			BlockchainConfig.Builder config = BlockchainConfig.builder();
+			// Start of user code for setup the custom chain
+			// End of user code
+			ethereum = EthereumFacadeProvider.forNetwork(config).create();
 		}
-		if(ethereum==null){
+		// take the standalone for all other cases
+		if (ethereum == null) {
 			TestConfig.Builder builder = TestConfig.builder();
-			//Start of user code for setup the standalone chain
-			//End of user code
+			// Start of user code for setup the standalone chain
+			// End of user code
 			ethereum = EthereumFacadeProvider.forTest(builder.build());
 		}
 	}
