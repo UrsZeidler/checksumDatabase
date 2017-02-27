@@ -113,7 +113,7 @@ public class EthereumInstance{
 				String url = System.getProperty("rpc-url");
 				String chainId = System.getProperty("chain-id");
 //				ethereum = rcp.create(url, new ChainId((byte) Integer.parseInt(chainId)));
-				ethereum = EthereumFacadeProvider.forRemoteNode(url, new ChainId((byte) Integer.parseInt(chainId)));
+				ethereum = EthereumFacadeProvider.forRemoteNode(url, ChainId.id(Integer.parseInt(chainId)));// new ChainId(Integer.parseInt(chainId)));
 
 			}else if (property.equalsIgnoreCase("private")){
 				PrivateNetworkConfig config = PrivateNetworkConfig.config();
