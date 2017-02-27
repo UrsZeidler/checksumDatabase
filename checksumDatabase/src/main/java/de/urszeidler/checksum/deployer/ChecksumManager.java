@@ -5,12 +5,13 @@ package de.urszeidler.checksum.deployer;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -29,11 +30,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.ethereum.crypto.ECKey;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.encoders.Hex;
 
 import de.urszeidler.checksum.EthereumInstance;
@@ -67,13 +67,13 @@ public class ChecksumManager {
 		super();
 		ethereum = EthereumInstance.getInstance().getEthereum();
 		deployer = new ContractDeployer(ethereum, "/combined.json", true);
-
 	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Security.addProvider(new BouncyCastleProvider());
 		Options options = createOptions();
 		CommandLineParser parser = new DefaultParser();
 		int returnValue = 0;
@@ -244,7 +244,9 @@ public class ChecksumManager {
 	 * @throws IOException
 	 */
 	public void addEntriesFromDirectory(String contractAddress,String dir)
-			throws NoSuchAlgorithmException, IOException, InterruptedException, ExecutionException {
+			throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
+		
+		
 		
 		MessageDigest md = MessageDigest.getInstance(algorithm);
 
@@ -389,20 +391,21 @@ public class ChecksumManager {
 				.desc("Set the pass of the key of the sender.")//
 				.longOpt("senderPass")//
 				.hasArg()//
+				.optionalArg(true)
 				.argName("password").numberOfArgs(1).build());
 		options.addOption(Option//
 				.builder("algorithm")//
-				.desc("Set the algorithm for the checksum.")//
+				.desc("Set the algorithm for the checksum. MD5 is the default.")//
 				.hasArg()//
 				.argName("algoname").numberOfArgs(1).build());
 		options.addOption(Option//
 				.builder("millis")//
-				.desc("The millisec o wait between checking the action.")//
+				.desc("The millisec to wait between checking the action.")//
 				.hasArg()//
 				.argName("millisec").numberOfArgs(1).build());
 		options.addOption(Option//
 				.builder("fileFilter")//
-				.desc("The file filter used for the directory action.")//
+				.desc("The file filter used for the directory action. *.* is the default.")//
 				.hasArg()//
 				.argName("wildcard").numberOfArgs(1).build());
 
@@ -480,7 +483,12 @@ public class ChecksumManager {
 		HelpFormatter formatter = new HelpFormatter();
 		String header = "\nA deployer and manager for for a version database on the blockchain. (c) Urs Zeidler 2017\n";
 		String footer = "\nexample: \n\n" ;
-		formatter.printHelp(150, "checksum", header, options, footer, true);
+		
+		Set<String> algorithms = Security.getAlgorithms("MessageDigest");
+		StringBuffer footerBuffer = new StringBuffer("\nexample: \n\nAvailable hash algorithms:\n");
+		algorithms.stream().sorted().forEachOrdered(a-> footerBuffer.append(a).append(" "));
+		
+		formatter.printHelp(150, "checksum", header, options, footerBuffer.toString(), true);
 	}
 
 	public de.urszeidler.checksum.EthereumInstance.DeployDuo<ChecksumDatabase> getManager() {
