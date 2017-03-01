@@ -339,11 +339,11 @@ public class ChecksumManager {
 		EthValue balance = ethereum.getBalance(decode);
 		System.out.println("Sender address and amount:" + senderAddressS + "->" + balance);
 		
-		FileSecureKey test = new FileSecureKey(new File("/home/urs/etc/UrsPrivateChain/keystore/UTC--2017-02-27T20-10-53.066400300Z--9aacd1a8806010180de44f90f92c55ada7193254"));
-		EthAccount decode2 = test.decode("");
-		ethereum.sendEther(decode, decode2.getAddress(), EthValue.ether(1L));
-		EthValue balance1 = ethereum.getBalance(decode2);
-		System.out.println("Sender address and amount:" + senderAddressS + "->" + balance1);
+//		FileSecureKey test = new FileSecureKey(new File("/home/urs/etc/UrsPrivateChain/keystore/UTC--2017-02-27T20-10-53.066400300Z--9aacd1a8806010180de44f90f92c55ada7193254"));
+//		EthAccount decode2 = test.decode("");
+//		ethereum.sendEther(decode, decode2.getAddress(), EthValue.ether(1L));
+//		EthValue balance1 = ethereum.getBalance(decode2);
+//		System.out.println("Sender address and amount:" + senderAddressS + "->" + balance1);
 		
 		return decode;
 	}
