@@ -39,6 +39,7 @@ public class ChecksumManagerTest extends AbstractContractTest {
 		checksumManager.changeOwner(manager.contractAddress.withLeading0x(), manager.contractAddress);
 		
 		assertEquals(manager.contractInstance.owner(), manager.contractAddress);
+		System.out.println();
 	}
 
 	@Test
@@ -63,8 +64,7 @@ public class ChecksumManagerTest extends AbstractContractTest {
 		entries = manager.contractInstance.entries(2);
 		assertEquals("version2", entries.getVersion());
 		assertEquals("checksum2", entries.getChecksum());
-		
-		
+		System.out.println();
 	}
 
 	@Test
@@ -80,6 +80,7 @@ public class ChecksumManagerTest extends AbstractContractTest {
 		assertEquals(_description, manager.contractInstance.description());
 		assertEquals(senderAddress, manager.contractInstance.owner());
 		assertEquals(0, manager.contractInstance.count().intValue());
+		System.out.println();
 	}
 
 	@Test
@@ -93,6 +94,7 @@ public class ChecksumManagerTest extends AbstractContractTest {
 		checksumManager.addEntriesFromDirectory(manager.contractAddress.withLeading0x(), file.getAbsolutePath());
 		
 		assertEquals(2, manager.contractInstance.count().intValue());
+		System.out.println();
 	}
 	
 	@Test
@@ -121,8 +123,45 @@ public class ChecksumManagerTest extends AbstractContractTest {
 		checksumManager.addEntriesFromDirectory(manager.contractAddress.withLeading0x(), file.getAbsolutePath());
 		
 		assertEquals(2, manager.contractInstance.count().intValue());
+		System.out.println();
 	}
 
+	@Test
+	public void testAddEntryFromFile() throws Exception {
+		testCreateChecksumDatabase();
+		DeployDuo<ChecksumDatabase> manager = checksumManager.getManager();
+
+		String dir="/testDir/testFile1.txt";
+		URL resource = this.getClass().getResource(dir);
+		File file = new File(resource.toURI());
+		checksumManager.addEntryFromFile(manager.contractAddress.withLeading0x(), file.getAbsolutePath());
+		assertEquals(1, manager.contractInstance.count().intValue());
+		
+		System.out.println();
+	}
+	
+	@Test
+	public void testVerifyFileOk() throws Exception {
+		testAddEntryFromFile();
+		String dir="/testDir/testFile1.txt";
+		URL resource = this.getClass().getResource(dir);
+		File file = new File(resource.toURI());
+		DeployDuo<ChecksumDatabase> manager = checksumManager.getManager();
+		assertTrue(checksumManager.verifyFile(manager.contractAddress.withLeading0x(), file.getAbsolutePath()));
+		System.out.println();
+	}
+	
+	@Test
+	public void testVerifyFileNotOk() throws Exception {
+		testAddEntryFromFile();
+		String dir="/testDir/testFile2.md";
+		URL resource = this.getClass().getResource(dir);
+		File file = new File(resource.toURI());
+		DeployDuo<ChecksumDatabase> manager = checksumManager.getManager();
+		assertFalse(checksumManager.verifyFile(manager.contractAddress.withLeading0x(), file.getAbsolutePath()));
+		System.out.println();
+	}
+	
 
 	@Override
 	protected void createFixture() throws Exception {

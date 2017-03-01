@@ -5,6 +5,7 @@ package de.urszeidler.checksum.deployer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -134,6 +135,7 @@ public class ChecksumManager {
 					if (values == null || values.length != 3) {
 						System.out.println("Error. Need 3 parameters: address,version,checksum");
 						printHelp(options);
+						return;
 					}
 
 					String address = values[0];
@@ -145,6 +147,7 @@ public class ChecksumManager {
 					if (values == null || values.length != 2) {
 						System.out.println("Error. Need 2 parameters: address,new owner address");
 						printHelp(options);
+						return;
 					}
 
 					String address = values[0];
@@ -155,26 +158,46 @@ public class ChecksumManager {
 					if (values == null || values.length != 2) {
 						System.out.println("Error. Need 2 parameters: address, directory");
 						printHelp(options);
+						return;
 					}
 
 					String address = values[0];
 					String dir = values[1];
 					checksumManager.addEntriesFromDirectory(address, dir);
+				}else if(commandLine.hasOption("af")){
+					String[] values = commandLine.getOptionValues("af");
+					if (values == null || values.length != 2) {
+						System.out.println("Error. Need 2 parameters: address, filename");
+						printHelp(options);
+						return;
+					}
+
+					String address = values[0];
+					String filename = values[1];
+					checksumManager.addEntryFromFile(address, filename);
+				}else if(commandLine.hasOption("v")){
+					String[] values = commandLine.getOptionValues("v");
+					if (values == null || values.length != 2) {
+						System.out.println("Error. Need 2 parameters: address, filename");
+						printHelp(options);
+						return;
+					}
+
+					String address = values[0];
+					String filename = values[1];
+					if(!checksumManager.verifyFile(address,filename))
+						returnValue = 1000;
 				}
 
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
+				printHelp(options);
+				returnValue = 10;
 			}
 
 			// EthereumInstance.getInstance().getEthereum().shutdown();
-		} catch (ParseException e1) {
-			System.out.println(e1.getMessage());
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 			printHelp(options);
 			returnValue = 10;
 		}
@@ -245,9 +268,7 @@ public class ChecksumManager {
 	 */
 	public void addEntriesFromDirectory(String contractAddress,String dir)
 			throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
-		
-		
-		
+		setManager(contractAddress);
 		MessageDigest md = MessageDigest.getInstance(algorithm);
 
 		File directory = new File(dir);
@@ -255,15 +276,76 @@ public class ChecksumManager {
 
 		String[] list = directory.list(filter);
 		for (String filename : list) {
-			File file = new File(dir+"/"+filename);
-			String name = file.getName();
-			byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
-			String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
-			addEntry(name, checksum);
+			String completetFilename = dir+"/"+filename;
+			addSingleFile(md, completetFilename);
 		}
 		listChecksumData(manager.contractAddress.withLeading0x());
 	}
 
+	/**
+	 * Add a single file to the database.
+	 * @param contractAddress
+	 * @param filename
+	 * @throws NoSuchAlgorithmException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public void addEntryFromFile(String contractAddress,String filename) throws NoSuchAlgorithmException, FileNotFoundException, IOException, InterruptedException, ExecutionException {
+		setManager(contractAddress);
+		MessageDigest md = MessageDigest.getInstance(algorithm);
+		addSingleFile(md, filename);
+		listChecksumData(manager.contractAddress.withLeading0x());
+	}
+	
+	/**
+	 * Add a single file to the database.
+	 * @param md
+	 * @param completetFilename
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	private void addSingleFile(MessageDigest md, String completetFilename)
+			throws IOException, FileNotFoundException, InterruptedException, ExecutionException {
+		File file = new File(completetFilename);
+		String name = file.getName();
+		byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
+		String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
+		addEntry(name, checksum);
+	}
+
+	
+
+	public boolean verifyFile(String address, String filename) throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
+		setManager(address);
+		MessageDigest md = MessageDigest.getInstance(algorithm);
+		File file = new File(filename);
+		byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
+		String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
+		ChecksumDatabase database = manager.contractInstance;
+		Integer count = database.count();
+		for (int i = 0; i < count; i++) {
+			ReturnGetEntry_string_string_uint entry = database.getEntry(i);
+			if(checksum.equals(entry.get_checksum())){
+				System.out.println("The file is valid a it is stored in the database.");
+				System.out.println(i + " " + entry.get_version() + " " + entry.get_checksum() + " " + entry.get_date());
+				return true;
+			}
+		}
+		System.out.println("Could not find the hash of the file in the datase, maybe hashed by another algorithm? We used:"+algorithm);
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param cdatabaseAddress
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	private void listChecksumData(String cdatabaseAddress)
 			throws IOException, InterruptedException, ExecutionException {
 		setManager(cdatabaseAddress);
@@ -294,7 +376,14 @@ public class ChecksumManager {
 		}
 		listChecksumData(manager.contractAddress.withLeading0x());
 	}
-
+	
+	/**
+	 * Instantiate the contract. 
+	 * @param cdatabaseAddress
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	private void setManager(String cdatabaseAddress) throws IOException, InterruptedException, ExecutionException {
 		manager = new DeployDuo<ChecksumDatabase>(EthAddress.of(cdatabaseAddress), null);
 		manager.contractInstance = deployer.createChecksumDatabaseProxy(sender, manager.contractAddress);
@@ -455,6 +544,23 @@ public class ChecksumManager {
 				.numberOfArgs(2)//
 				.argName("contractAddress directory")//
 				.build());
+		actionOptionGroup.addOption(Option//
+				.builder("af")//
+				.desc("Add a file to the entries.")//
+				.longOpt("addFile")//
+				.required(false)//
+				.hasArg(true)//
+				.numberOfArgs(2)//
+				.argName("contractAddress filename")//
+				.build());
+		actionOptionGroup.addOption(Option//
+				.builder("v")//
+				.desc("Verify a file against the checksum database.")//
+				.longOpt("verify")//
+				.required(false)//
+				.hasArg(true)//
+				.numberOfArgs(2).argName("contractAddress filename")//
+				.build());
 
 		options.addOptionGroup(actionOptionGroup);
 		return options;
@@ -464,29 +570,33 @@ public class ChecksumManager {
 	 * @param options
 	 */
 	private static void printHelp(Options options) {
-		System.out.println("used EthereumFacadeProvider:" + System.getProperty("EthereumFacadeProvider") + "\n\n");
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("change the ethereum client via -DEthereumFacadeProvider=<type>\n")//
-				.append("type : main - the main net\n")//
-				.append("       test - the test net\n")//
-				.append("       ropsten - the ropsten net\n")//
-				.append("       private - the private net\n")//
-				.append("       InfuraRopsten - the ropsten net via Infrua\n")//
-				.append("       InfuraMain - the main net via Infrua\n")//
-				.append("           -DapiKey=<key> - the the api key for the service\n")//
-				.append("       rpc - connect via rpc\n")//
-				.append("          -Drpc-url=<url> - the url of the rpc server\n")//
-				.append("          -Dchain-id=<id> - the chain id (0 for the main chain and 3 for ropsten)\n")//
-				.append("\n");
-		System.out.println(buffer.toString());
+//		System.out.println("used EthereumFacadeProvider:" + System.getProperty("EthereumFacadeProvider") + "\n\n");
 
 		HelpFormatter formatter = new HelpFormatter();
 		String header = "\nA deployer and manager for for a version database on the blockchain. (c) Urs Zeidler 2017\n";
-		String footer = "\nexample: \n\n" ;
 		
 		Set<String> algorithms = Security.getAlgorithms("MessageDigest");
 		StringBuffer footerBuffer = new StringBuffer("\nexample: \n\nAvailable hash algorithms:\n");
 		algorithms.stream().sorted().forEachOrdered(a-> footerBuffer.append(a).append(" "));
+		footerBuffer.append("\n\nReturns 0 if all went well.\n")
+		.append("Returns 1000 if the file can not be verified.\n")
+		.append("Returns 10 in all of the exception cases.\n\n")
+		
+		.append("used EthereumFacadeProvider:")
+		.append(System.getProperty("EthereumFacadeProvider"))
+		.append("\n");
+//		.append("change the ethereum client via -DEthereumFacadeProvider=<type>\n")//
+//		.append("type : main - the main net\n")//
+//		.append("       test - the test net\n")//
+//		.append("       ropsten - the ropsten net\n")//
+//		.append("       private - the private net\n")//
+//		.append("       InfuraRopsten - the ropsten net via Infrua\n")//
+//		.append("       InfuraMain - the main net via Infrua\n")//
+//		.append("           -DapiKey=<key> - the the api key for the service\n")//
+//		.append("       rpc - connect via rpc\n")//
+//		.append("          -Drpc-url=<url> - the url of the rpc server\n")//
+//		.append("          -Dchain-id=<id> - the chain id (0 for the main chain and 3 for ropsten)\n")//
+//		.append("\n");
 		
 		formatter.printHelp(150, "checksum", header, options, footerBuffer.toString(), true);
 	}

@@ -107,7 +107,7 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 			ethereum.events().observeBlocks().subscribe(ev->System.out.println(ev));
 			ethereum.events().observeTransactions().subscribe(ev->System.out.println(ev));
 		}
-		System.out.println("add entry.");
+
 		assertEquals(0, fixture.count().intValue());
 		fixture.addEntry("test1", "checksum1").get();
 		if(supportEvents()){
@@ -117,14 +117,12 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 		// Thread.sleep(90000);
 		assertEquals(1, fixture.count().intValue());
 		
-		System.out.println("add entry.");
 		fixture.addEntry("test2", "checksum2").get();
 		if(supportEvents())
 			assertEquals(2, eventCounter);
 		// Thread.sleep(90000);
 		assertEquals(2, fixture.count().intValue());
 		
-		System.out.println("add entry.");
 		fixture.addEntry("test3", "checksum3").get();
 		if(supportEvents())
 			assertEquals(3, eventCounter);
@@ -145,19 +143,7 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 		fixture.changeOwner(fixtureAddress).get();
 		assertEquals(fixtureAddress.toString(), fixture.owner().toString());
 		assertNotEquals(owner.toString(), fixture.owner().toString());
-
-		try {
-			fixture.addEntry("sss", "").get();
-
-			Integer count = fixture.count();
-			assertEquals(0, count.intValue());
-
-			fixture.changeOwner(owner);
-			assertEquals(fixtureAddress.toString(), fixture.owner().toString());
-
-		} catch (Exception e) {
-			System.out.println("exception should happen");
-		} // End of user code
+		// End of user code
 	}
 	/**
 	 * Test method for  getEntry(Integer id).
@@ -204,6 +190,18 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 		assertEquals(fixture.url(), "_url");
 		assertEquals(fixture.count().intValue(), 0);
 		assertEquals(fixture.owner(), sender.getAddress());
+	}
+	
+	@Test(expected=ExecutionException.class)
+	public void testChangeOwnerAsNotOwner() throws Exception {
+		testChangeOwner_address();
+		fixture.changeOwner(senderAddress).get();
+	}
+	
+	@Test(expected=ExecutionException.class)
+	public void testAddEntryNotOwner() throws Exception {
+		testChangeOwner_address();
+		fixture.addEntry("test", "checksum").get();
 	}
 	// End of user code
 }
