@@ -94,7 +94,6 @@ public class ChecksumManagerTest extends AbstractContractTest {
 		checksumManager.addEntriesFromDirectory(manager.contractAddress.withLeading0x(), file.getAbsolutePath());
 		
 		assertEquals(2, manager.contractInstance.count().intValue());
-		System.out.println();
 	}
 	
 	@Test
@@ -162,7 +161,33 @@ public class ChecksumManagerTest extends AbstractContractTest {
 		System.out.println();
 	}
 	
+	@Test
+	public void testVerifyDirectoryOK() throws Exception {
+		testAddEntryFromDirectory();
+		
+		DeployDuo<ChecksumDatabase> manager = checksumManager.getManager();
+		
+		String dir="/testDir";
+		URL resource = this.getClass().getResource(dir);
+		File file = new File(resource.toURI());
+		
+		assertTrue(checksumManager.verifyDirectory(manager.contractAddress.withLeading0x(), file.getAbsolutePath()));
+	}
+	
+	@Test
+	public void testVerifyDirectoryNotOK() throws Exception {
+		testAddEntryFromDirectory_Filter();		
+		DeployDuo<ChecksumDatabase> manager = checksumManager.getManager();
+		checksumManager.setFileFilter("*.md");
 
+		String dir="/testDir";
+		URL resource = this.getClass().getResource(dir);
+		File file = new File(resource.toURI());
+		
+		assertFalse(checksumManager.verifyDirectory(manager.contractAddress.withLeading0x(), file.getAbsolutePath()));
+	}
+	
+	
 	@Override
 	protected void createFixture() throws Exception {
 		checksumManager = new ChecksumManager();

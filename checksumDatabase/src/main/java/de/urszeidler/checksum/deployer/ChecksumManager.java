@@ -12,6 +12,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +59,7 @@ public class ChecksumManager {
 	private EthAccount sender;
 	private String algorithm = "MD5";
 	private boolean publishSwarm = false;
+	private boolean listDatabase = true;
 
 	private interface DoAndWaitOneTime<T> {
 		boolean isDone();
@@ -112,6 +115,9 @@ public class ChecksumManager {
 				}
 				if(commandLine.hasOption("fileFilter")){
 					checksumManager.setFileFilter(commandLine.getOptionValue("fileFilter"));
+				}
+				if(commandLine.hasOption("noList")){
+					checksumManager.setListDatabase(false);
 				}
 				if (commandLine.hasOption("c")) {
 					String[] values = commandLine.getOptionValues("c");
@@ -187,6 +193,18 @@ public class ChecksumManager {
 					String filename = values[1];
 					if(!checksumManager.verifyFile(address,filename))
 						returnValue = 1000;
+				}else if(commandLine.hasOption("vd")){
+					String[] values = commandLine.getOptionValues("vd");
+					if (values == null || values.length != 2) {
+						System.out.println("Error. Need 2 parameters: address, directory");
+						printHelp(options);
+						return;
+					}
+
+					String address = values[0];
+					String dirname = values[1];
+					if(!checksumManager.verifyDirectory(address,dirname))
+						returnValue = 1000;
 				}
 
 			} catch (Exception e) {
@@ -208,7 +226,15 @@ public class ChecksumManager {
 		}
 		System.exit(returnValue);
 	}
-
+	
+	/**
+	 * Change the owner of the database.
+	 * @param cdatabaseAddress
+	 * @param newOwner
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	public void changeOwner(String cdatabaseAddress, EthAddress newOwner)
 			throws IOException, InterruptedException, ExecutionException {
 		setManager(cdatabaseAddress);
@@ -339,6 +365,40 @@ public class ChecksumManager {
 		return false;
 	}
 	
+
+	public boolean verifyDirectory(String address, String dirname) throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
+		setManager(address);
+		MessageDigest md = MessageDigest.getInstance(algorithm);
+		File directory = new File(dirname);
+		FilenameFilter filter = new WildcardFileFilter(fileFilter);
+
+		HashMap<String,File> hashes = new HashMap<>();
+		String[] list = directory.list(filter);
+		for (String filename : list) {
+			String completetFilename = dirname+"/"+filename;
+			File file = new File(completetFilename);
+			byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
+			String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
+			hashes.put(checksum,file);
+		}
+		
+		ChecksumDatabase database = manager.contractInstance;
+		Integer count = database.count();
+		for (int i = 0; i < count; i++) {
+			ReturnGetEntry_string_string_uint entry = database.getEntry(i);
+			hashes.remove(entry.get_checksum());
+		}
+		if(hashes.isEmpty()) {
+			System.out.println("All files checked out.");
+			return true;
+		}
+		for (File file : hashes.values()) {
+			System.out.println("File '"+file.getName()+"' is not part of the database.");
+		}
+		return false;
+	}
+
+	
 	/**
 	 * 
 	 * @param cdatabaseAddress
@@ -348,6 +408,9 @@ public class ChecksumManager {
 	 */
 	private void listChecksumData(String cdatabaseAddress)
 			throws IOException, InterruptedException, ExecutionException {
+		if(!listDatabase)
+			return;
+		
 		setManager(cdatabaseAddress);
 
 		ChecksumDatabase database = manager.contractInstance;
@@ -497,6 +560,11 @@ public class ChecksumManager {
 				.desc("The file filter used for the directory action. *.* is the default.")//
 				.hasArg()//
 				.argName("wildcard").numberOfArgs(1).build());
+		options.addOption(Option//
+				.builder("noList")//
+				.desc("Don't list the entries of the database.")//
+				.hasArg(false)//
+				.build());
 
 		OptionGroup actionOptionGroup = new OptionGroup();
 		actionOptionGroup.setRequired(true);
@@ -509,6 +577,7 @@ public class ChecksumManager {
 				.longOpt("create")//
 				.required(false)//
 				.hasArg(true)//
+				.type(String.class)//
 				.numberOfArgs(3).argName("name url description")//
 				.build());
 		actionOptionGroup.addOption(Option//
@@ -561,6 +630,14 @@ public class ChecksumManager {
 				.hasArg(true)//
 				.numberOfArgs(2).argName("contractAddress filename")//
 				.build());
+		actionOptionGroup.addOption(Option//
+				.builder("vd")//
+				.desc("Verify all matching files of a directory against the checksum database.")//
+				.longOpt("verifyDirectory")//
+				.required(false)//
+				.hasArg(true)//
+				.numberOfArgs(2).argName("contractAddress directory")//
+				.build());
 
 		options.addOptionGroup(actionOptionGroup);
 		return options;
@@ -570,13 +647,14 @@ public class ChecksumManager {
 	 * @param options
 	 */
 	private static void printHelp(Options options) {
-//		System.out.println("used EthereumFacadeProvider:" + System.getProperty("EthereumFacadeProvider") + "\n\n");
-
 		HelpFormatter formatter = new HelpFormatter();
-		String header = "\nA deployer and manager for for a version database on the blockchain. (c) Urs Zeidler 2017\n";
+		String header = "\nA deployer and manager for for a version database on the blockchain. (c) Urs Zeidler 2017\n\n";
 		
 		Set<String> algorithms = Security.getAlgorithms("MessageDigest");
-		StringBuffer footerBuffer = new StringBuffer("\nexample: \n\nAvailable hash algorithms:\n");
+		StringBuffer footerBuffer = new StringBuffer("\nexample: ")
+				.append("checksum -c  aName http://example.io 'A description for the database'\n")
+				.append("create a new Database with aName as name")				
+				.append("\n\nAvailable hash algorithms:\n");
 		algorithms.stream().sorted().forEachOrdered(a-> footerBuffer.append(a).append(" "));
 		footerBuffer.append("\n\nReturns 0 if all went well.\n")
 		.append("Returns 1000 if the file can not be verified.\n")
@@ -619,6 +697,10 @@ public class ChecksumManager {
 
 	public void setFileFilter(String fileFilter) {
 		this.fileFilter = fileFilter;
+	}
+
+	public void setListDatabase(boolean listDatabase) {
+		this.listDatabase = listDatabase;
 	}
 
 }
