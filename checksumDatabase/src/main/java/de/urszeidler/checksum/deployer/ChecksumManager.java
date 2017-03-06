@@ -159,8 +159,8 @@ public class ChecksumManager {
 					String address = values[0];
 					String newOwner = values[1];
 					checksumManager.changeOwner(address, EthAddress.of(newOwner));
-				} else if(commandLine.hasOption("d")){
-					String[] values = commandLine.getOptionValues("d");
+				} else if(commandLine.hasOption("ad")){
+					String[] values = commandLine.getOptionValues("ad");
 					if (values == null || values.length != 2) {
 						System.out.println("Error. Need 2 parameters: address, directory");
 						printHelp(options);
