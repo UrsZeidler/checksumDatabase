@@ -9,7 +9,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.adridadou.ethereum.EthereumFacade;
 import org.adridadou.ethereum.EthereumFacadeProvider;
-import org.adridadou.ethereum.ethj.BlockchainConfig;
 import org.adridadou.ethereum.ethj.EthereumJConfigs;
 import org.adridadou.ethereum.ethj.TestConfig;
 import org.adridadou.ethereum.ethj.privatenetwork.PrivateEthereumFacadeProvider;
@@ -17,6 +16,7 @@ import org.adridadou.ethereum.ethj.privatenetwork.PrivateNetworkConfig;
 import org.adridadou.ethereum.values.EthAccount;
 import org.adridadou.ethereum.values.EthAddress;
 import org.adridadou.ethereum.values.EthValue;
+import org.adridadou.ethereum.values.config.BlockchainConfig;
 import org.adridadou.ethereum.values.config.ChainId;
 import org.adridadou.ethereum.values.config.InfuraKey;
 import org.ethereum.crypto.ECKey;

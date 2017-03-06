@@ -65,12 +65,12 @@ public abstract class AbstractContractTest {
 		String property = System.getProperty("EthereumFacadeProvider");
 		if (property != null)
 			if (property.equalsIgnoreCase("ropsten") ||property.equalsIgnoreCase("rpc")|| property.equalsIgnoreCase("InfuraRopsten")) {
-				SecureKey a = AccountProvider.fromKeystore(new File("/home/urs/.ethereum/testnet/keystore/UTC--2015-12-15T13-55-38.006995319Z--ba7b29b63c00dff8614f8d8a6bf34e94e853b2d3"));
+				SecureKey a = AccountProvider.fromKeystore(new File(System.getProperty("keyfile")));
 				sender = a.decode(System.getProperty("keyPass"));
 				senderAddress = sender.getAddress();
 				
 				//need to be called to release the lock on the completeablefuture
-				ethereum.events().onReady();
+//				ethereum.events().onReady();
 				
 			} else if (property.equalsIgnoreCase("private")) {
 				sender = new EthAccount(ECKey.fromPrivate(BigInteger.valueOf(100000L)));

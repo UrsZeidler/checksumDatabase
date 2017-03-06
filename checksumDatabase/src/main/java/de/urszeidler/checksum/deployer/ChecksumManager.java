@@ -11,12 +11,18 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.adridadou.ethereum.EthereumFacade;
 import org.adridadou.ethereum.keystore.FileSecureKey;
 import org.adridadou.ethereum.keystore.SecureKey;
+import org.adridadou.ethereum.swarm.SwarmHash;
 import org.adridadou.ethereum.values.EthAccount;
 import org.adridadou.ethereum.values.EthAddress;
 import org.adridadou.ethereum.values.EthValue;
@@ -28,11 +34,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.ethereum.crypto.ECKey;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.encoders.Hex;
 
 import de.urszeidler.checksum.EthereumInstance;
@@ -54,6 +59,8 @@ public class ChecksumManager {
 	private long millis;
 	private EthAccount sender;
 	private String algorithm = "MD5";
+	private boolean publishSwarm = false;
+	private boolean listDatabase = true;
 
 	private interface DoAndWaitOneTime<T> {
 		boolean isDone();
@@ -65,13 +72,13 @@ public class ChecksumManager {
 		super();
 		ethereum = EthereumInstance.getInstance().getEthereum();
 		deployer = new ContractDeployer(ethereum, "/combined.json", true);
-
 	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Security.addProvider(new BouncyCastleProvider());
 		Options options = createOptions();
 		CommandLineParser parser = new DefaultParser();
 		int returnValue = 0;
@@ -110,6 +117,9 @@ public class ChecksumManager {
 				if(commandLine.hasOption("fileFilter")){
 					checksumManager.setFileFilter(commandLine.getOptionValue("fileFilter"));
 				}
+				if(commandLine.hasOption("noList")){
+					checksumManager.setListDatabase(false);
+				}
 				if (commandLine.hasOption("c")) {
 					String[] values = commandLine.getOptionValues("c");
 					if (values == null || values.length != 3) {
@@ -132,6 +142,7 @@ public class ChecksumManager {
 					if (values == null || values.length != 3) {
 						System.out.println("Error. Need 3 parameters: address,version,checksum");
 						printHelp(options);
+						return;
 					}
 
 					String address = values[0];
@@ -143,47 +154,88 @@ public class ChecksumManager {
 					if (values == null || values.length != 2) {
 						System.out.println("Error. Need 2 parameters: address,new owner address");
 						printHelp(options);
+						return;
 					}
 
 					String address = values[0];
 					String newOwner = values[1];
 					checksumManager.changeOwner(address, EthAddress.of(newOwner));
-				} else if(commandLine.hasOption("d")){
-					String[] values = commandLine.getOptionValues("d");
+				} else if(commandLine.hasOption("ad")){
+					String[] values = commandLine.getOptionValues("ad");
 					if (values == null || values.length != 2) {
 						System.out.println("Error. Need 2 parameters: address, directory");
 						printHelp(options);
+						return;
 					}
 
 					String address = values[0];
 					String dir = values[1];
 					checksumManager.addEntriesFromDirectory(address, dir);
+				}else if(commandLine.hasOption("af")){
+					String[] values = commandLine.getOptionValues("af");
+					if (values == null || values.length != 2) {
+						System.out.println("Error. Need 2 parameters: address, filename");
+						printHelp(options);
+						return;
+					}
+
+					String address = values[0];
+					String filename = values[1];
+					checksumManager.addEntryFromFile(address, filename);
+				}else if(commandLine.hasOption("v")){
+					String[] values = commandLine.getOptionValues("v");
+					if (values == null || values.length != 2) {
+						System.out.println("Error. Need 2 parameters: address, filename");
+						printHelp(options);
+						return;
+					}
+
+					String address = values[0];
+					String filename = values[1];
+					if(!checksumManager.verifyFile(address,filename))
+						returnValue = 1000;
+				}else if(commandLine.hasOption("vd")){
+					String[] values = commandLine.getOptionValues("vd");
+					if (values == null || values.length != 2) {
+						System.out.println("Error. Need 2 parameters: address, directory");
+						printHelp(options);
+						return;
+					}
+
+					String address = values[0];
+					String dirname = values[1];
+					if(!checksumManager.verifyDirectory(address,dirname))
+						returnValue = 1000;
 				}
 
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
+				printHelp(options);
+				returnValue = 10;
 			}
 
 			// EthereumInstance.getInstance().getEthereum().shutdown();
-		} catch (ParseException e1) {
-			System.out.println(e1.getMessage());
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 			printHelp(options);
 			returnValue = 10;
 		}
-		try {
-			Thread.sleep(10000L);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(10000L);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		System.exit(returnValue);
 	}
-
+	
+	/**
+	 * Change the owner of the database.
+	 * @param cdatabaseAddress
+	 * @param newOwner
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	public void changeOwner(String cdatabaseAddress, EthAddress newOwner)
 			throws IOException, InterruptedException, ExecutionException {
 		setManager(cdatabaseAddress);
@@ -243,25 +295,127 @@ public class ChecksumManager {
 	 */
 	public void addEntriesFromDirectory(String contractAddress,String dir)
 			throws NoSuchAlgorithmException, IOException, InterruptedException, ExecutionException {
-		
+		setManager(contractAddress);
 		MessageDigest md = MessageDigest.getInstance(algorithm);
 
 		File directory = new File(dir);
+		System.out.println("dir:"+directory);
 		FilenameFilter filter = new WildcardFileFilter(fileFilter);
 
 		String[] list = directory.list(filter);
+		
+		System.out.println("files:"+Arrays.asList(list));
+		
 		for (String filename : list) {
-			File file = new File(dir+"/"+filename);
-			String name = file.getName();
-			byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
-			String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
-			addEntry(name, checksum);
+			String completetFilename = dir+"/"+filename;
+			addSingleFile(md, completetFilename);
 		}
 		listChecksumData(manager.contractAddress.withLeading0x());
 	}
 
+	/**
+	 * Add a single file to the database.
+	 * @param contractAddress
+	 * @param filename
+	 * @throws NoSuchAlgorithmException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public void addEntryFromFile(String contractAddress,String filename) throws NoSuchAlgorithmException, FileNotFoundException, IOException, InterruptedException, ExecutionException {
+		setManager(contractAddress);
+		MessageDigest md = MessageDigest.getInstance(algorithm);
+		addSingleFile(md, filename);
+		listChecksumData(manager.contractAddress.withLeading0x());
+	}
+	
+	/**
+	 * Add a single file to the database.
+	 * @param md
+	 * @param completetFilename
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	private void addSingleFile(MessageDigest md, String completetFilename)
+			throws IOException, FileNotFoundException, InterruptedException, ExecutionException {
+		File file = new File(completetFilename);
+		String name = file.getName();
+		byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
+		String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
+		addEntry(name, checksum);
+	}
+
+	
+
+	public boolean verifyFile(String address, String filename) throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
+		setManager(address);
+		MessageDigest md = MessageDigest.getInstance(algorithm);
+		File file = new File(filename);
+		byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
+		String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
+		ChecksumDatabase database = manager.contractInstance;
+		Integer count = database.count();
+		for (int i = 0; i < count; i++) {
+			ReturnGetEntry_string_string_uint entry = database.getEntry(i);
+			if(checksum.equals(entry.get_checksum())){
+				System.out.println("The file is valid a it is stored in the database.");
+				System.out.println(i + " " + entry.get_version() + " " + entry.get_checksum() + " " + entry.get_date());
+				return true;
+			}
+		}
+		System.out.println("Could not find the hash of the file in the datase, maybe hashed by another algorithm? We used:"+algorithm);
+		return false;
+	}
+	
+
+	public boolean verifyDirectory(String address, String dirname) throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
+		setManager(address);
+		MessageDigest md = MessageDigest.getInstance(algorithm);
+		File directory = new File(dirname);
+		FilenameFilter filter = new WildcardFileFilter(fileFilter);
+
+		HashMap<String,File> hashes = new HashMap<>();
+		String[] list = directory.list(filter);
+		for (String filename : list) {
+			String completetFilename = dirname+"/"+filename;
+			File file = new File(completetFilename);
+			byte[] digest = md.digest(IOUtils.toByteArray(new FileInputStream(file)));
+			String checksum = org.apache.commons.codec.binary.Hex.encodeHexString(digest);
+			hashes.put(checksum,file);
+		}
+		
+		ChecksumDatabase database = manager.contractInstance;
+		Integer count = database.count();
+		for (int i = 0; i < count; i++) {
+			ReturnGetEntry_string_string_uint entry = database.getEntry(i);
+			hashes.remove(entry.get_checksum());
+		}
+		if(hashes.isEmpty()) {
+			System.out.println("All files checked out.");
+			return true;
+		}
+		for (File file : hashes.values()) {
+			System.out.println("File '"+file.getName()+"' is not part of the database.");
+		}
+		return false;
+	}
+
+	
+	/**
+	 * 
+	 * @param cdatabaseAddress
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	private void listChecksumData(String cdatabaseAddress)
 			throws IOException, InterruptedException, ExecutionException {
+		if(!listDatabase)
+			return;
+		
 		setManager(cdatabaseAddress);
 
 		ChecksumDatabase database = manager.contractInstance;
@@ -281,14 +435,26 @@ public class ChecksumManager {
 
 	public void createChecksumDatabase(String _name, String _url, String _description)
 			throws IOException, InterruptedException, ExecutionException {
+		
 		System.out.println(
 				"Creating a new ChecksumDatabase: name=" + _name + " url=" + _url + " description=" + _description);
 		manager = deployer.createChecksumDatabase(sender, _name, _url, _description);
 		
 //		ethereum.publishMetadataToSwarm(deployer.compiledContractChecksumDatabase());
+		if(publishSwarm){
+			SwarmHash publishMetadataToSwarm = ethereum.publishMetadataToSwarm(deployer.compiledContractChecksumDatabase());
+			System.out.println("published to swarm:"+publishMetadataToSwarm);
+		}
 		listChecksumData(manager.contractAddress.withLeading0x());
 	}
-
+	
+	/**
+	 * Instantiate the contract. 
+	 * @param cdatabaseAddress
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	private void setManager(String cdatabaseAddress) throws IOException, InterruptedException, ExecutionException {
 		manager = new DeployDuo<ChecksumDatabase>(EthAddress.of(cdatabaseAddress), null);
 		manager.contractInstance = deployer.createChecksumDatabaseProxy(sender, manager.contractAddress);
@@ -300,7 +466,7 @@ public class ChecksumManager {
 		if (property != null && (property.equalsIgnoreCase("rpc") || property.equalsIgnoreCase("ropsten")
 				|| property.equalsIgnoreCase("InfuraRopsten"))) {
 			//needed to release the lock on the future
-			ethereum.events().onReady();
+//			ethereum.events().onReady();
 
 			millis = 2000L;
 		} else if (property != null && property.equalsIgnoreCase("private")) {
@@ -392,22 +558,28 @@ public class ChecksumManager {
 				.desc("Set the pass of the key of the sender.")//
 				.longOpt("senderPass")//
 				.hasArg()//
+				.optionalArg(true)
 				.argName("password").numberOfArgs(1).build());
 		options.addOption(Option//
 				.builder("algorithm")//
-				.desc("Set the algorithm for the checksum.")//
+				.desc("Set the algorithm for the checksum. MD5 is the default.")//
 				.hasArg()//
 				.argName("algoname").numberOfArgs(1).build());
 		options.addOption(Option//
 				.builder("millis")//
-				.desc("The millisec o wait between checking the action.")//
+				.desc("The millisec to wait between checking the action.")//
 				.hasArg()//
 				.argName("millisec").numberOfArgs(1).build());
 		options.addOption(Option//
 				.builder("fileFilter")//
-				.desc("The file filter used for the directory action.")//
+				.desc("The file filter used for the directory action. *.* is the default.")//
 				.hasArg()//
 				.argName("wildcard").numberOfArgs(1).build());
+		options.addOption(Option//
+				.builder("noList")//
+				.desc("Don't list the entries of the database.")//
+				.hasArg(false)//
+				.build());
 
 		OptionGroup actionOptionGroup = new OptionGroup();
 		actionOptionGroup.setRequired(true);
@@ -420,6 +592,7 @@ public class ChecksumManager {
 				.longOpt("create")//
 				.required(false)//
 				.hasArg(true)//
+				.type(String.class)//
 				.numberOfArgs(3).argName("name url description")//
 				.build());
 		actionOptionGroup.addOption(Option//
@@ -455,6 +628,31 @@ public class ChecksumManager {
 				.numberOfArgs(2)//
 				.argName("contractAddress directory")//
 				.build());
+		actionOptionGroup.addOption(Option//
+				.builder("af")//
+				.desc("Add a file to the entries.")//
+				.longOpt("addFile")//
+				.required(false)//
+				.hasArg(true)//
+				.numberOfArgs(2)//
+				.argName("contractAddress filename")//
+				.build());
+		actionOptionGroup.addOption(Option//
+				.builder("v")//
+				.desc("Verify a file against the checksum database.")//
+				.longOpt("verify")//
+				.required(false)//
+				.hasArg(true)//
+				.numberOfArgs(2).argName("contractAddress filename")//
+				.build());
+		actionOptionGroup.addOption(Option//
+				.builder("vd")//
+				.desc("Verify all matching files of a directory against the checksum database.")//
+				.longOpt("verifyDirectory")//
+				.required(false)//
+				.hasArg(true)//
+				.numberOfArgs(2).argName("contractAddress directory")//
+				.build());
 
 		options.addOptionGroup(actionOptionGroup);
 		return options;
@@ -464,26 +662,36 @@ public class ChecksumManager {
 	 * @param options
 	 */
 	private static void printHelp(Options options) {
-		System.out.println("used EthereumFacadeProvider:" + System.getProperty("EthereumFacadeProvider") + "\n\n");
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("change the ethereum client via -DEthereumFacadeProvider=<type>\n")//
-				.append("type : main - the main net\n")//
-				.append("       test - the test net\n")//
-				.append("       ropsten - the ropsten net\n")//
-				.append("       private - the private net\n")//
-				.append("       InfuraRopsten - the ropsten net via Infrua\n")//
-				.append("       InfuraMain - the main net via Infrua\n")//
-				.append("           -DapiKey=<key> - the the api key for the service\n")//
-				.append("       rpc - connect via rpc\n")//
-				.append("          -Drpc-url=<url> - the url of the rpc server\n")//
-				.append("          -Dchain-id=<id> - the chain id (0 for the main chain and 3 for ropsten)\n")//
-				.append("\n");
-		System.out.println(buffer.toString());
-
 		HelpFormatter formatter = new HelpFormatter();
-		String header = "\nA deployer and manager for for a version database on the blockchain. (c) Urs Zeidler 2017\n";
-		String footer = "\nexample: \n\n" ;
-		formatter.printHelp(150, "checksum", header, options, footer, true);
+		String header = "\nA deployer and manager for for a version database on the blockchain. (c) Urs Zeidler 2017\n\n";
+		
+		Set<String> algorithms = Security.getAlgorithms("MessageDigest");
+		StringBuffer footerBuffer = new StringBuffer("\nexample: ")
+				.append("checksum -c  aName http://example.io 'A description for the database'\n")
+				.append("create a new Database with aName as name")				
+				.append("\n\nAvailable hash algorithms:\n");
+		algorithms.stream().sorted().forEachOrdered(a-> footerBuffer.append(a).append(" "));
+		footerBuffer.append("\n\nReturns 0 if all went well.\n")
+		.append("Returns 1000 if the file can not be verified.\n")
+		.append("Returns 10 in all of the exception cases.\n\n")
+		
+		.append("used EthereumFacadeProvider:")
+		.append(System.getProperty("EthereumFacadeProvider"))
+		.append("\n");
+//		.append("change the ethereum client via -DEthereumFacadeProvider=<type>\n")//
+//		.append("type : main - the main net\n")//
+//		.append("       test - the test net\n")//
+//		.append("       ropsten - the ropsten net\n")//
+//		.append("       private - the private net\n")//
+//		.append("       InfuraRopsten - the ropsten net via Infrua\n")//
+//		.append("       InfuraMain - the main net via Infrua\n")//
+//		.append("           -DapiKey=<key> - the the api key for the service\n")//
+//		.append("       rpc - connect via rpc\n")//
+//		.append("          -Drpc-url=<url> - the url of the rpc server\n")//
+//		.append("          -Dchain-id=<id> - the chain id (0 for the main chain and 3 for ropsten)\n")//
+//		.append("\n");
+		
+		formatter.printHelp(150, "checksum", header, options, footerBuffer.toString(), true);
 	}
 
 	public de.urszeidler.checksum.EthereumInstance.DeployDuo<ChecksumDatabase> getManager() {
@@ -504,6 +712,10 @@ public class ChecksumManager {
 
 	public void setFileFilter(String fileFilter) {
 		this.fileFilter = fileFilter;
+	}
+
+	public void setListDatabase(boolean listDatabase) {
+		this.listDatabase = listDatabase;
 	}
 
 }
