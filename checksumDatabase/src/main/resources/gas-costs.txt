@@ -2,7 +2,7 @@
 ======= ChecksumDatabase =======
 Gas estimation:
 construction:
-   [???] + 712600 = [???]
+   [???] + 923600 = [???]
 external:
    count():	229
    name():	[???]
@@ -13,6 +13,7 @@ external:
    changeOwner(address):	20540
    entries(uint256):	[???]
    getEntry(uint256):	[???]
-   fallback:	288
+   addEntry(string,string,string):	[???]
+   fallback:	310
 internal:
    ():	12

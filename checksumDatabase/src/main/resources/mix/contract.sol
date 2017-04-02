@@ -90,7 +90,24 @@ contract ChecksumDatabase {
 		// End of user code
 	}
 	// Start of user code ChecksumDatabase.operations
-	//TODO: implement
+	function addEntry(string _version,string _checksum, string anaother) public  onlyOwner  {
+		//Start of user code ChecksumDatabase.function.addEntry_string_string
+		entries[count].version = _version;
+		entries[count].checksum = _checksum;
+		entries[count].date = now;
+		VersionChecksum(_version,_checksum,now,count);
+		count++;
+		//End of user code
+	}
+//	function addEntry(string _version,string _checksum, int anaother) public  onlyOwner  {
+//		//Start of user code ChecksumDatabase.function.addEntry_string_string
+//		entries[count].version = _version;
+//		entries[count].checksum = _checksum;
+//		entries[count].date = now;
+//		VersionChecksum(_version,_checksum,now,count);
+//		count++;
+//		//End of user code
+//	}
 	// End of user code
 }
 

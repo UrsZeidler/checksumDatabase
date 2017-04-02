@@ -38,6 +38,9 @@ public interface ChecksumDatabase{
 	ReturnGetEntry_string_string_uint getEntry(Integer id);
 
 	//Start of user code additional_methods
+	java.util.concurrent.CompletableFuture<Void> addEntry(String _version,String _checksum, String another);
+
+//	java.util.concurrent.CompletableFuture<Void> addEntry(String _version,String _checksum, int another);
 
 	//End of user code
 }

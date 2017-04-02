@@ -101,7 +101,7 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 			ContractDeployer deployer = new ContractDeployer(ethereum);
 			Observable<EventVersionChecksum_string_string_uint_uint> observable = deployer
 					.observeEventVersionChecksum_string_string_uint_uint(fixtureAddress);
-			observable.subscribe(it -> System.out.println("---> event:" + it));
+			observable.subscribe(it -> System.out.println("---> EventVersionChecksum:" + it));
 			observable.subscribe(ev->eventCounter.incrementAndGet());
 			
 			ethereum.events().observeBlocks().subscribe(ev->System.out.println(ev));
@@ -204,6 +204,20 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 		assertEquals(fixture.url(), "_url");
 		assertEquals(fixture.count().intValue(), 0);
 		assertEquals(fixture.owner(), sender.getAddress());
+	}
+	
+	
+	@Test
+	public void testName() throws Exception {
+		fixture.addEntry("test1", "checksum1","").get();
+		// Thread.sleep(90000);
+		assertEquals(1, fixture.count().intValue());
+		
+		System.out.println("add entry.");
+		fixture.addEntry("test2", "checksum2","").get();
+		// Thread.sleep(90000);
+		assertEquals(2, fixture.count().intValue());
+
 	}
 	// End of user code
 }
