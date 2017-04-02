@@ -188,10 +188,15 @@ public class ChecksumManagerTest extends AbstractContractTest {
 	}
 	
 	
-	@Override
 	protected void createFixture() throws Exception {
 		checksumManager = new ChecksumManager();
 		checksumManager.setSender(sender);
+	}
+
+	@Override
+	protected String getQuallifiedContractName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

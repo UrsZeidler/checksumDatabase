@@ -16,7 +16,7 @@
 <stringAttribute key="COMPILER_PROGRAMM" value="/usr/bin/solc"/>
 <stringAttribute key="COMPILER_TARGET" value="bin"/>
 <booleanAttribute key="COMPILER_USERDOC" value="true"/>
-<booleanAttribute key="COMPILE_CONTRACTS" value="true"/>
+<booleanAttribute key="COMPILE_CONTRACTS" value="false"/>
 <stringAttribute key="CONTRACT_FILE_HEADER" value="/*&#10;*&#10;*&#10;*/"/>
 <booleanAttribute key="GENERATE_ABI" value="false"/>
 <stringAttribute key="GENERATE_ABI_TARGET" value="/checksumDatabase/mix/abi"/>
@@ -27,10 +27,12 @@
 <booleanAttribute key="GENERATE_JAVA_TESTS" value="true"/>
 <booleanAttribute key="GENERATE_JS_CONTROLLER" value="false"/>
 <stringAttribute key="GENERATE_JS_CONTROLLER_TARGET" value="/checksumDatabase/mix/js"/>
+<booleanAttribute key="GENERATE_JS_TEST" value="true"/>
 <booleanAttribute key="GENERATE_JS_TEST_CONTROLLER" value="false"/>
 <stringAttribute key="GENERATE_JS_TEST_TARGET" value="/checksumDatabase/mix/test"/>
 <booleanAttribute key="GENERATE_MARKDOWN" value="true"/>
 <booleanAttribute key="GENERATE_MIX" value="false"/>
+<stringAttribute key="GENERATE_UML_DOC_IMAGE_URL" value=""/>
 <booleanAttribute key="GENERATE_WEB3" value="false"/>
 <stringAttribute key="GENERATION_JAVA_2_SOLIDITY_TYPE_address" value="org.adridadou.ethereum.values.EthAddress"/>
 <stringAttribute key="GENERATION_JAVA_2_SOLIDITY_TYPE_bool" value="Boolean"/>
@@ -46,6 +48,8 @@
 <stringAttribute key="GENERATION_TARGET" value="/checksumDatabase/src/main/resources/mix"/>
 <stringAttribute key="GENERATION_TARGET_DOC" value="/checksumDatabase/doc"/>
 <stringAttribute key="JS_FILE_HEADER" value="// file header"/>
+<booleanAttribute key="de.urszeidler.eclipse.solidity.generation.example.useCaseDoc" value="false"/>
+<stringAttribute key="de.urszeidler.eclipse.solidity.generation.example.usecaseDocTarget" value="doc"/>
 <booleanAttribute key="enable_version" value="true"/>
 <stringAttribute key="modelUri" value="/checksumDatabase/model/checksum.uml"/>
 <stringAttribute key="version_pragma" value="pragma solidity ^0.4.0;"/>

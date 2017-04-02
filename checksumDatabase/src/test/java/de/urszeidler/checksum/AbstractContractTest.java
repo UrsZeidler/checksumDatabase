@@ -1,30 +1,31 @@
 package de.urszeidler.checksum;
 
+// Start of user code AbstractContractTest.customImports
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.adridadou.ethereum.EthereumFacade;
+import org.adridadou.ethereum.keystore.AccountProvider;
+import org.adridadou.ethereum.keystore.SecureKey;
 import org.adridadou.ethereum.values.CompiledContract;
 import org.adridadou.ethereum.values.EthAccount;
 import org.adridadou.ethereum.values.EthAddress;
 import org.adridadou.ethereum.values.SoliditySource;
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.util.encoders.Hex;
 import org.ethereum.crypto.ECKey;
 import org.ethereum.solidity.compiler.CompilationResult;
 import org.ethereum.solidity.compiler.CompilationResult.ContractMetadata;
 import org.junit.BeforeClass;
-import org.spongycastle.util.encoders.Hex;
-
-// Start of user code AbstractContractTest.customImports
-//TODO: add custom imports
-import org.adridadou.ethereum.keystore.AccountProvider;
-import org.adridadou.ethereum.keystore.SecureKey;
 
 // End of user code
 
@@ -42,11 +43,18 @@ public abstract class AbstractContractTest {
 	protected SoliditySource contractSource;
 
 	// Start of user code AbstractContractTest.customFields
-	//TODO: add custom attributes
+	private static Map<String,CompiledContract> contracts = new HashMap<String, CompiledContract>();
 	// End of user code
 
-
-	protected abstract void createFixture() throws Exception;
+	/**
+	 * @return the basic contract name
+	 */
+	protected abstract String getContractName();
+	
+	/**
+	 * @return the contract file together with the contract name
+	 */
+	protected abstract String getQuallifiedContractName();
 
 	/**
 	 * Setup up the blockchain. Add the 'EthereumFacadeProvider' property to use 
@@ -81,8 +89,6 @@ public abstract class AbstractContractTest {
 		// End of user code
 	}
 
-	protected abstract String getContractName();
-
 	/**
 	 * Returns the already compiled contact.
 	 * 
@@ -93,12 +99,24 @@ public abstract class AbstractContractTest {
 	 * @throws IOException
 	 */
 	protected CompiledContract getCompiledContract(String filePath) throws URISyntaxException, FileNotFoundException, IOException {
+		CompiledContract compiledContract = contracts.get(getQuallifiedContractName());
+		if(compiledContract!=null)
+			return compiledContract;
+		
 		File file = new File(this.getClass().getResource(filePath).toURI());
 		String rawJson = IOUtils.toString(new FileInputStream(file), EthereumFacade.CHARSET);
 		CompilationResult result = CompilationResult.parse(rawJson);
 		
 		ContractMetadata contractMetadata = result.contracts.get(getContractName());
-		return CompiledContract.from(contractSource, getContractName(), contractMetadata);
+		if (contractMetadata == null) {
+			Optional<String> optional = result.contracts.keySet().stream()
+					.filter(s -> s.endsWith(getQuallifiedContractName())).findFirst();
+			if (optional.isPresent())
+				contractMetadata = result.contracts.get(optional.get());
+		}
+		compiledContract = CompiledContract.from(contractSource, getContractName(), contractMetadata);
+		contracts.put(getQuallifiedContractName(), compiledContract);
+		return compiledContract;
 	}
 
 	/**

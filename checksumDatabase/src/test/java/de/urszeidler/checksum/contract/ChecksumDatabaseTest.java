@@ -1,34 +1,20 @@
 package de.urszeidler.checksum.contract;
 
+// Start of user code ChecksumDatabaseTest.customImports
+
 import static org.junit.Assert.*;
-
-
-import de.urszeidler.checksum.contract.ChecksumDatabase.*;
-
-
 import java.io.File;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.*;
-import java.math.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.adridadou.ethereum.EthereumFacade;
-import org.adridadou.ethereum.keystore.*;
 import org.adridadou.ethereum.values.CompiledContract;
-import org.adridadou.ethereum.values.EthAccount;
 import org.adridadou.ethereum.values.EthAddress;
 import org.adridadou.ethereum.values.SoliditySource;
-import org.adridadou.ethereum.values.config.ChainId;
-import org.ethereum.crypto.ECKey;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.urszeidler.checksum.AbstractContractTest;
-import de.urszeidler.checksum.EthereumInstance;
-
-// Start of user code ChecksumDatabaseTest.customImports
-import java.util.concurrent.atomic.AtomicInteger;
 import de.urszeidler.checksum.deployer.ContractDeployer;
 import rx.Observable;
 // End of user code
@@ -40,6 +26,7 @@ import rx.Observable;
  */
 public class ChecksumDatabaseTest extends AbstractContractTest{
 
+ 
 	private ChecksumDatabase fixture;
 	// Start of user code ChecksumDatabaseTest.attributes
 	// End of user code
@@ -47,6 +34,11 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 	@Override
 	protected String getContractName() {
 		return "ChecksumDatabase";
+	}
+
+	@Override
+	protected String getQuallifiedContractName() {
+		return "contract.sol:ChecksumDatabase";
 	}
 
 	/**
@@ -101,7 +93,7 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 			ContractDeployer deployer = new ContractDeployer(ethereum);
 			Observable<EventVersionChecksum_string_string_uint_uint> observable = deployer
 					.observeEventVersionChecksum_string_string_uint_uint(fixtureAddress);
-			observable.subscribe(it -> System.out.println("---> event:" + it));
+			observable.subscribe(it -> System.out.println("---> EventVersionChecksum:" + it));
 			observable.subscribe(ev->eventCounter.incrementAndGet());
 			
 			ethereum.events().observeBlocks().subscribe(ev->System.out.println(ev));

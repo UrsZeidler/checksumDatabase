@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -159,12 +159,25 @@ public class ContractDeployer {
 		if (compiledContracts == null){
 			Map<String, CompiledContract> contracts = ethereum.compile(contractSource).get();
 			compiledContract = contracts.get("ChecksumDatabase");
+			if (compiledContract == null) {
+				Optional<String> optional = contracts.keySet().stream().filter(s -> s.endsWith("contract.sol:ChecksumDatabase"))
+						.findFirst();
+				if (optional.isPresent())
+					compiledContract = contracts.get(optional.get());
+			}
 		} else {
 			ContractMetadata contractMetadata = compiledContracts.contracts.get("ChecksumDatabase");
-			if (contractMetadata == null)
-				throw new IllegalArgumentException("Contract code for 'ChecksumDatabase' not found");
+			if (contractMetadata == null) {
+				Optional<String> optional = compiledContracts.contracts.keySet().stream()
+						.filter(s -> s.endsWith("contract.sol:ChecksumDatabase")).findFirst();
+				if (optional.isPresent())
+					contractMetadata = compiledContracts.contracts.get(optional.get());
+			}
 			compiledContract = CompiledContract.from(null, "ChecksumDatabase", contractMetadata);
 		}
+		if(compiledContract == null)
+			throw new IllegalArgumentException("Contract code for 'ChecksumDatabase' not found");
+
 		return compiledContract;
 	}
 	/**
