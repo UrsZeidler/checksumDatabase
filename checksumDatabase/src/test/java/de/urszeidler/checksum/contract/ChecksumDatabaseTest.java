@@ -22,6 +22,7 @@ import org.adridadou.ethereum.values.config.ChainId;
 import org.ethereum.crypto.ECKey;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.urszeidler.checksum.AbstractContractTest;
@@ -208,6 +209,7 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 	
 	
 	@Test
+	@Ignore
 	public void testName() throws Exception {
 		fixture.addEntry("test1", "checksum1","").get();
 		// Thread.sleep(90000);
