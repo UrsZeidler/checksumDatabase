@@ -8,20 +8,22 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.adridadou.ethereum.EthereumFacade;
-import org.adridadou.ethereum.ethj.BlockchainConfig;
+import org.adridadou.ethereum.EthjEthereumFacadeProvider;
+import org.adridadou.ethereum.RpcEthereumFacadeProvider;
+import org.adridadou.ethereum.ethj.EthereumJConfigs;
 import org.adridadou.ethereum.ethj.TestConfig;
-import org.adridadou.ethereum.ethj.provider.EthereumFacadeProvider;
-import org.adridadou.ethereum.ethj.provider.EthereumJConfigs;
-import org.adridadou.ethereum.ethj.provider.PrivateEthereumFacadeProvider;
-import org.adridadou.ethereum.ethj.provider.PrivateNetworkConfig;
-import org.adridadou.ethereum.rpc.provider.EthereumFacadeRpcProvider;
-import org.adridadou.ethereum.rpc.provider.InfuraMainEthereumFacadeProvider;
-import org.adridadou.ethereum.rpc.provider.InfuraRopstenEthereumFacadeProvider;
-import org.adridadou.ethereum.values.EthAccount;
-import org.adridadou.ethereum.values.EthAddress;
-import org.adridadou.ethereum.values.EthValue;
-import org.adridadou.ethereum.values.config.ChainId;
+import org.adridadou.ethereum.ethj.privatenetwork.PrivateEthereumFacadeProvider;
+import org.adridadou.ethereum.ethj.privatenetwork.PrivateNetworkConfig;
+import org.adridadou.ethereum.propeller.EthereumConfig;
+import org.adridadou.ethereum.propeller.EthereumConfig.Builder;
+import org.adridadou.ethereum.propeller.keystore.AccountProvider;
+import org.adridadou.ethereum.propeller.EthereumFacade;
+import org.adridadou.ethereum.propeller.values.ChainId;
+import org.adridadou.ethereum.propeller.values.EthAddress;
+import org.adridadou.ethereum.propeller.values.EthValue;
+import org.adridadou.ethereum.rpc.EthereumRpcConfig;
+import org.adridadou.ethereum.values.config.BlockchainConfig;
+
 import org.adridadou.ethereum.values.config.InfuraKey;
 import org.ethereum.crypto.ECKey;
 
@@ -41,14 +43,15 @@ public class EthereumInstance{
 	public static final String PROP_API_KEY = "apiKey";
 	public static final String PROP_ETHEREUM_FACADE_PROVIDER = "EthereumFacadeProvider";
 	//the different access technologies
-	public static String EI_MAIN = "main";
-	public static String EI_TEST = "test";
-	public static String EI_ROPSTEN = "ropsten";
-	public static String EI_PRIVATE = "private";
-	public static String EI_RPC = "rpc";
-	public static String EI_INFURA_ROPSTEN = "InfuraRopsten";
-	public static String EI_INFURA_MAIN = "InfuraMain";
-	public static String EI_CUSTOM = "custom";
+	public static final String EI_MAIN = "main";
+	public static final String EI_TEST = "test";
+	public static final String EI_ROPSTEN = "ropsten";
+	public static final String EI_PRIVATE = "private";
+	public static final String EI_RPC = "rpc";
+	public static final String EI_INFURA_ROPSTEN = "InfuraRopsten";
+	public static final String EI_INFURA_MAIN = "InfuraMain";
+	public static final String EI_INFURA_RINKEBY = "InfuraRinkeby";
+	public static final String EI_CUSTOM = "custom";
 	
 	public static Set<String> ALL_RPC = Sets.newHashSet(EI_RPC,EI_INFURA_MAIN,EI_INFURA_ROPSTEN);
 	public static Set<String> ALL_TESTNET = Sets.newHashSet(EI_ROPSTEN,EI_INFURA_ROPSTEN);
@@ -109,51 +112,66 @@ public class EthereumInstance{
 	private void setup() throws Exception {
 		String property = System.getProperty(PROP_ETHEREUM_FACADE_PROVIDER);
 		if (EI_MAIN.equalsIgnoreCase(property)) {
-			BlockchainConfig.Builder mainNet = EthereumJConfigs.mainNet();
+			BlockchainConfig bConfig = EthereumJConfigs.mainNet();
+			Builder config = EthereumConfig.builder();
 			// Start of user code for setup the main chain
 			// End of user code
-			ethereum = EthereumFacadeProvider.forNetwork(mainNet).create();
+			ethereum = EthjEthereumFacadeProvider.forNetwork(bConfig).create(config.build());
 		} else if (EI_TEST.equalsIgnoreCase(property)) {
-			BlockchainConfig.Builder testnet = EthereumJConfigs.etherCampTestnet();
-			//Start of user code for setup the test chain
+			BlockchainConfig bConfig = EthereumJConfigs.etherCampTestnet();
+			Builder config = EthereumConfig.builder();
+			//  Start of user code for setup the test chain
 			// End of user code
-			ethereum = EthereumFacadeProvider.forNetwork(testnet).create();
+			ethereum = EthjEthereumFacadeProvider.forNetwork(bConfig).create(config.build());
 		} else if (EI_ROPSTEN.equalsIgnoreCase(property)) {
-			BlockchainConfig.Builder ropsten = EthereumJConfigs.ropsten();
+			BlockchainConfig bConfig = EthereumJConfigs.ropsten();
+			Builder config = EthereumConfig.builder();
 			// Start of user code for setup the ropsten chain
 			// End of user code
-			ethereum = EthereumFacadeProvider.forNetwork(ropsten).create();
+			ethereum = EthjEthereumFacadeProvider.forNetwork(bConfig).create(config.build());
+		} else if (EI_CUSTOM.equalsIgnoreCase(property)) {
+			BlockchainConfig mainNet = EthereumJConfigs.ropsten();
+			Builder config = EthereumConfig.builder();
+			// Start of user code for setup the custom chain
+			// End of user code
+			ethereum = EthjEthereumFacadeProvider.forNetwork(mainNet).create(config.build());
+		} else if (EI_INFURA_MAIN.equalsIgnoreCase(property)) {
+			String apiKey = System.getProperty(PROP_API_KEY);
+			EthereumRpcConfig config = EthereumRpcConfig.config().build();
+			RpcEthereumFacadeProvider.forInfura(InfuraKey.of(apiKey), config).createMain();
+			ethereum = RpcEthereumFacadeProvider.forInfura(InfuraKey.of(apiKey), config).createRopsten();
 		} else if (EI_INFURA_ROPSTEN.equalsIgnoreCase(property)) {
 			String apiKey = System.getProperty(PROP_API_KEY);
-			ethereum = InfuraRopstenEthereumFacadeProvider.create(new InfuraKey(apiKey));
-		} else if (EI_INFURA_ROPSTEN.equalsIgnoreCase(property)) {
+			EthereumRpcConfig config = EthereumRpcConfig.config().build();
+			RpcEthereumFacadeProvider.forInfura(InfuraKey.of(apiKey), config).createRopsten();
+			ethereum = RpcEthereumFacadeProvider.forInfura(InfuraKey.of(apiKey), config).createRopsten();
+		} else if (EI_INFURA_RINKEBY.equalsIgnoreCase(property)) {
 			String apiKey = System.getProperty(PROP_API_KEY);
-			ethereum = new InfuraMainEthereumFacadeProvider().create(new InfuraKey(apiKey));
+			EthereumRpcConfig config = EthereumRpcConfig.config().build();
+			RpcEthereumFacadeProvider.forInfura(InfuraKey.of(apiKey), config).createRinkeby();
+			ethereum = RpcEthereumFacadeProvider.forInfura(InfuraKey.of(apiKey), config).createRopsten();
 		} else if (EI_RPC.equalsIgnoreCase(property)) {
-			EthereumFacadeRpcProvider rcp = new EthereumFacadeRpcProvider();
 			String url = System.getProperty(PROP_RPC_URL);
 			String chainId = System.getProperty(PROP_CHAIN_ID);
-			ethereum = rcp.create(url, new ChainId((byte) Integer.parseInt(chainId)));
+			EthereumRpcConfig config = EthereumRpcConfig.config().build();
+			ethereum = RpcEthereumFacadeProvider.forRemoteNode(url, ChainId.id(Integer.parseInt(chainId)), config);
 		} else if (EI_PRIVATE.equalsIgnoreCase(property)) {
 			PrivateNetworkConfig config = PrivateNetworkConfig.config();
+			BlockchainConfig builder = BlockchainConfig.builder();
 			// Start of user code for setup the private chain
 			config.reset(true)
-			.initialBalance(new EthAccount(ECKey.fromPrivate(BigInteger.valueOf(100000L))),
+			.initialBalance(AccountProvider.fromPrivateKey(BigInteger.valueOf(100000L)),
 					EthValue.ether(10L));
 
 			// End of user code
-			ethereum = new PrivateEthereumFacadeProvider().create(config);
-		} else if (EI_CUSTOM.equalsIgnoreCase(property)) {
-			BlockchainConfig.Builder config = BlockchainConfig.builder();
-			// Start of user code for setup the custom chain
-			// End of user code
-			ethereum = EthereumFacadeProvider.forNetwork(config).create();
+			PrivateEthereumFacadeProvider ethereumFacadeProvider = new PrivateEthereumFacadeProvider();
+			ethereum = ethereumFacadeProvider.create(config, EthereumConfig.builder().build());
 		}
 		if (ethereum == null) {
 			TestConfig.Builder builder = TestConfig.builder();
 			// Start of user code for setup the standalone chain
 			// End of user code
-			ethereum = EthereumFacadeProvider.forTest(builder.build());
+			ethereum = EthjEthereumFacadeProvider.forTest(builder.build());
 		}
 	}
 

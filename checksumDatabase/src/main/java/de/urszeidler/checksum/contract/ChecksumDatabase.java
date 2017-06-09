@@ -1,7 +1,7 @@
 package de.urszeidler.checksum.contract;
 
 import java.util.concurrent.CompletableFuture;
-import org.adridadou.ethereum.values.EthAddress;
+import org.adridadou.ethereum.propeller.values.EthAddress;
 
 //Start of user code customized_imports
 
@@ -19,7 +19,7 @@ public interface ChecksumDatabase{
 	
 	String description();
 	
-	org.adridadou.ethereum.values.EthAddress owner();
+	EthAddress owner();
 	
 	Integer count();
 	
@@ -33,7 +33,7 @@ public interface ChecksumDatabase{
 	**/
 	java.util.concurrent.CompletableFuture<Void> addEntry(String _version,String _checksum);
 	
-	java.util.concurrent.CompletableFuture<Void> changeOwner(org.adridadou.ethereum.values.EthAddress newOwner);
+	java.util.concurrent.CompletableFuture<Void> changeOwner(EthAddress newOwner);
 	
 	ReturnGetEntry_string_string_uint getEntry(Integer id);
 

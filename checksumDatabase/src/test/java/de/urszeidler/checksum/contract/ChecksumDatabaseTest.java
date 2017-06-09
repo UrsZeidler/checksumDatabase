@@ -1,16 +1,17 @@
 package de.urszeidler.checksum.contract;
 
 // Start of user code ChecksumDatabaseTest.customImports
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
-import static org.junit.Assert.*;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.adridadou.ethereum.values.CompiledContract;
-import org.adridadou.ethereum.values.EthAddress;
-import org.adridadou.ethereum.values.SoliditySource;
+import org.adridadou.ethereum.propeller.solidity.SolidityContractDetails;
+import org.adridadou.ethereum.propeller.values.EthAddress;
+import org.adridadou.ethereum.propeller.values.SoliditySource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,7 +64,7 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 	protected void createFixture() throws Exception {
 		//Start of user code createFixture
 //		CompiledContract compiledContract = ethereum.compile(contractSource, getContractName()).get();
-		CompiledContract compiledContract = getCompiledContract("/combined.json");
+		SolidityContractDetails compiledContract = getCompiledContract("/combined.json");
 		String _name = "_name";
 		String _url = "_url";
 		String _description = "_description";
