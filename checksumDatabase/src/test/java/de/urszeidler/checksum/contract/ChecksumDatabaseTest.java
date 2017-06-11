@@ -124,8 +124,8 @@ public class ChecksumDatabaseTest extends AbstractContractTest{
 		// End of user code
 	}
 	/**
-	 * Test method for  changeOwner(org.adridadou.ethereum.values.EthAddress newOwner).
-	 * see {@link ChecksumDatabase#changeOwner( org.adridadou.ethereum.values.EthAddress)}
+	 * Test method for  changeOwner(EthAddress newOwner).
+	 * see {@link ChecksumDatabase#changeOwner( EthAddress)}
 	 * @throws Exception
 	 */
 	@Test
