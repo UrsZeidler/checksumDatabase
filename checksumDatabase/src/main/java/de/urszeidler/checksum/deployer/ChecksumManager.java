@@ -6,6 +6,7 @@ package de.urszeidler.checksum.deployer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -205,7 +206,13 @@ public class ChecksumManager {
 					if(!checksumManager.verifyDirectory(address,dirname))
 						returnValue = 1000;
 				}
+				if(checksumManager.getManager()!=null && commandLine.hasOption("wca")){
+					String[] values = commandLine.getOptionValues("wca");
+					String filename = values[0];
 
+					File file = new File(filename);
+					IOUtils.write(checksumManager.getManager().contractAddress.withLeading0x(), new FileOutputStream(file),"UTF-8");
+				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				printHelp(options);
@@ -223,7 +230,9 @@ public class ChecksumManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.exit(returnValue);
+		//prevent from exit the vm
+		if(System.getProperty("NoExit")==null)
+			System.exit(returnValue);
 	}
 	
 	/**
@@ -563,6 +572,12 @@ public class ChecksumManager {
 				.desc("Don't list the entries of the database.")//
 				.hasArg(false)//
 				.build());
+		options.addOption(Option//
+				.builder("wca")//
+				.longOpt("writeContractAddress")//
+				.desc("Write contract to file.")//
+				.hasArg()//
+				.argName("filename").numberOfArgs(1).build());
 
 		OptionGroup actionOptionGroup = new OptionGroup();
 		actionOptionGroup.setRequired(true);
