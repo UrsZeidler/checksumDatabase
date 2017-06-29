@@ -98,5 +98,5 @@ The possible INSTANCES are:
     InfuraMain - rcp via Infura for the main net
     InfuraRopsten - rcp via Infura for the ropsten testnet
         apiKey - the api key
-    custom - a freely configurable chain
 
+The main, ropsten, test and private chain a supplied thru ethereumj. For rpc you need a running rpc instance like geth.
