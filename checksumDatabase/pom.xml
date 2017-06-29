@@ -3,15 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.urszeidler.ethereum.smartcontract</groupId>
 	<artifactId>checksumDatabase</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 
 
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>org.adridadou</groupId> -->
-		<!-- <artifactId>eth-contract-api</artifactId> -->
-		<!-- <version>0.16</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.adridadou</groupId>
 			<artifactId>eth-propeller-ethj</artifactId>
