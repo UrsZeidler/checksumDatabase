@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Checksum database for #{checksumDatabase.name()}</title>
+</h:head>
+<h:body>
+	<h2>Checksum database for #{checksumDatabase.name()}</h2>
+	<p:outputLabel value="Check out the description: " />
+	<p:link href="#{checksumDatabase.url()}"
+		value="#{checksumDatabase.url()}" />
+	<p:panel header="currently #{checksumDatabase.count()} entries">
+		<c:forEach items="#{checksumDatabase.entries}" var="e">
+			version: <p:outputLabel value="#{e.version}" />
+			at: <p:outputLabel value="#{e.date}" />
+			checksum: <p:outputLabel value="#{e.checksum}" />
+			<br />
+		</c:forEach>
+	</p:panel>
+</h:body>
+</html>
