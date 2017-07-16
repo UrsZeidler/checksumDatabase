@@ -1,14 +1,20 @@
 package de.urszeidler.checksum.deployer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ExecutionException;
 
+import org.adridadou.ethereum.propeller.EthereumFacade;
+import org.adridadou.ethereum.propeller.values.EthAddress;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,6 +26,7 @@ import de.urszeidler.checksum.contract.ChecksumDatabaseChecksumEntry;
 public class ChecksumManagerTest extends AbstractContractTest {
 
 	private ChecksumManager checksumManager;
+	private ContractDeployer deployer;
 
 	@Override
 	protected String getContractName() {
@@ -188,9 +195,37 @@ public class ChecksumManagerTest extends AbstractContractTest {
 	}
 	
 	
+	@Test
+	public void testDeployContract() throws Exception {
+		String _name= "name";
+		String _url = "url";
+		String _description = "description";
+		System.setProperty("NoExit", "true");
+		String[] args = System.getProperty("keyFile") ==null ?
+				new String[] { "-c", _name, _url, _description,"-wca", "ca.txt" }
+				:				
+				new String[] { "-c", _name, _url, _description,"-sk",System.getProperty("keyFile"),"-sp", System.getProperty("keyPass"),"-wca", "ca.txt" };
+		
+		ChecksumManager.main(args);
+		
+		File file = new File("ca.txt");
+		String ca = IOUtils.toString(new FileInputStream(file), EthereumFacade.CHARSET);
+		EthAddress address = EthAddress.of(ca);
+
+		ChecksumDatabase manager = deployer.createChecksumDatabaseProxy(sender, address);
+		assertEquals(_name, manager.name());
+		assertEquals(_url, manager.url());
+		assertEquals(_description, manager.description());
+		assertEquals(senderAddress, manager.owner());
+		assertEquals(0, manager.count().intValue());
+
+	}
+	
 	protected void createFixture() throws Exception {
 		checksumManager = new ChecksumManager();
 		checksumManager.setSender(sender);
+		
+		deployer = new ContractDeployer(ethereum, "/combined.json", true);
 	}
 
 	@Override

@@ -215,7 +215,7 @@ public class ChecksumManager {
 				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
-				printHelp(options);
+//				printHelp(options);
 				returnValue = 10;
 			}
 
@@ -225,14 +225,15 @@ public class ChecksumManager {
 			printHelp(options);
 			returnValue = 10;
 		}
-		try {
-			Thread.sleep(10000L);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		//prevent from exit the vm
-		if(System.getProperty("NoExit")==null)
+		if(System.getProperty("NoExit")==null){
+			try {
+				Thread.sleep(10000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			System.exit(returnValue);
+		}
 	}
 	
 	/**
@@ -440,6 +441,8 @@ public class ChecksumManager {
 			throws IOException, InterruptedException, ExecutionException {
 		System.out.println(
 				"Creating a new ChecksumDatabase: name=" + _name + " url=" + _url + " description=" + _description);
+		System.out.println(
+				"---->"+sender.getAddress().withLeading0x());
 		manager = deployer.createChecksumDatabase(sender, _name, _url, _description);
 		if(publishSwarm){
 			SwarmHash publishMetadataToSwarm = ethereum.publishMetadataToSwarm(deployer.compiledContractChecksumDatabase());
@@ -466,7 +469,7 @@ public class ChecksumManager {
 		if (property != null && (property.equalsIgnoreCase("rpc") || property.equalsIgnoreCase("ropsten")
 				|| property.equalsIgnoreCase("InfuraRopsten"))) {
 
-			ethereum.events().onReady();
+//			sender = unlockAccount(senderKey, senderPass);
 
 			millis = 2000L;
 		} else if (property != null && property.equalsIgnoreCase("private")) {
@@ -502,7 +505,7 @@ public class ChecksumManager {
 		EthAccount decode = key2.decode(pass);
 		String senderAddressS = decode.getAddress().withLeading0x();
 		EthValue balance = ethereum.getBalance(decode);
-		System.out.println("Sender address and amount:" + senderAddressS + "->" + balance);
+		System.out.println("Sender address and amount:" + senderAddressS + "->" + balance.inEth());
 		return decode;
 	}
 
