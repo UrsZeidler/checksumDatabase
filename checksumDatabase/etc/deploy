@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+if [ -e contract.address.txt ]
+then
+    echo "contract exist"
+    exit	
+fi
+
+./checksum.sh -c  "$@" -wca contract.address.txt
+

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ ! -e contract.address.txt ]
+then
+    echo "contract does not exist"
+    exit	
+fi
+
+CONTRACT_ADDRESS=$(cat contract.address.txt)
+
+echo "verifying with contract: $CONTRACT_ADDRESS"
+
+./checksum.sh -vd $CONTRACT_ADDRESS $@ -algorithm SHA-256
+

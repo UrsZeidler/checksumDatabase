@@ -29,6 +29,9 @@
           <includes>
             <include>*.sh</include>
             <include>*.conf</include>
+            <include>addDirectory</include>
+            <include>verifyDirectory</include>
+            <include>deploy</include>
           </includes>
         </fileSet>
         <fileSet>
