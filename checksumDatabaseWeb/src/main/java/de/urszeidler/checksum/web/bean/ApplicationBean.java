@@ -36,6 +36,8 @@ public class ApplicationBean {
 	private de.urszeidler.checksum.contract.ChecksumDatabase database;
 	private ContractDeployer contractDeployer;
 
+	private EthAddress contractAddress;
+
 	@PostConstruct
 	public void init() {
 		String ca = env.getProperty("contractAddress");
@@ -50,21 +52,25 @@ public class ApplicationBean {
 		EthereumInstance instance = EthereumInstance.getInstance();
 		contractDeployer = new ContractDeployer(instance.getEthereum(), "/combined.json", true);
 
-		EthAddress address = EthAddress.of(ca);
-		try {
-			EthAccount account = AccountProvider.fromPrivateKey(BigInteger.valueOf(100000L));
-			database = contractDeployer.createChecksumDatabaseProxy(account, address);
-		} catch (IOException | InterruptedException | ExecutionException e) {
-			logger.error("error creating the contract proxy: ", e);
-		}
+		contractAddress = EthAddress.of(ca);
+//		try {
+//			EthAccount account = AccountProvider.fromPrivateKey(BigInteger.valueOf(100000L));
+//			database = contractDeployer.createChecksumDatabaseProxy(account, contractAddress);
+//		} catch (IOException | InterruptedException | ExecutionException e) {
+//			logger.error("error creating the contract proxy: ", e);
+//		}
 	}
 
-	public de.urszeidler.checksum.contract.ChecksumDatabase getDatabase() {
-		return database;
-	}
+//	public de.urszeidler.checksum.contract.ChecksumDatabase getDatabase() {
+//		return database;
+//	}
 
 	public ContractDeployer getContractDeployer() {
 		return contractDeployer;
+	}
+
+	public EthAddress getContractAddress() {
+		return contractAddress;
 	}
 
 }

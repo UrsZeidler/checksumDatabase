@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+
+<h:head>
+
+</h:head>
+<body>
+	<p:link href="index.xhtml" title="back ...">back ...</p:link>
+	<!-- grid begin -->
+	<div class="ui-g">
+		<div class="ui-g-5">
+
+
+			<h:form>
+				<p:panel header="Session config">
+					<div class="ui-g">
+						<div class="ui-g-5">Readonly</div>
+						<div class="ui-g-7">
+							<p:inputSwitch disabled="true" value="#{sessionBean.readOnly}" />
+						</div>
+						<div class="ui-g-5">server mode</div>
+						<div class="ui-g-7">
+							<p:inputSwitch disabled="true" value="#{sessionBean.serverMode}" />
+						</div>
+						<div class="ui-g-5">key file</div>
+						<div class="ui-g-7">
+
+							<p:inputText label="keyFile" value="#{sessionBean.keyFile}"></p:inputText>
+						</div>
+						<div class="ui-g-5">passwort</div>
+						<div class="ui-g-7">
+
+							<p:password value="#{sessionBean.keyPass}" />
+						</div>
+						<p:commandButton type="push" action="#{sessionBean.unlockKey()}"
+							title="Print" image="ui-icon-print" />
+					</div>
+				</p:panel>
+			</h:form>
+		</div>
+		<div class="ui-g-5">
+			<p:panel header="Account">
+			Balance:
+			<p:outputLabel value="#{sessionBean.balance}" />
+			Address:
+			<p:outputLabel value="#{sessionBean.accountAddress}" />
+			</p:panel>
+		</div>
+
+		<div class="ui-g-5">
+			<h:form>
+				<p:panel header="Contract">
+			Contract Address:
+			<p:inputText value="#{sessionBean.contractAddress}" />
+					<p:commandButton action="#{sessionBean.changeContractAddress()}" />
+				</p:panel>
+			</h:form>
+		</div>
+	</div>
+</body>
+</html>

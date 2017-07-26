@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.adridadou</groupId>
 			<artifactId>eth-propeller-web3j</artifactId>
-			<version>0.12</version>
+			<version>0.13-SNAPSHOT</version>
 		</dependency>
 
 

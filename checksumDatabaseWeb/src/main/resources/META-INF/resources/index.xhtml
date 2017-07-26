@@ -3,23 +3,82 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:chsum="http://urszeidler.de/facelets/ethereum/checksum">
 
 <h:head>
 	<title>Checksum database for #{checksumDatabase.name()}</title>
 </h:head>
 <h:body>
+
+
+
+
+	<h:form>
+		<p:toolbar>
+			<f:facet name="left">
+				<p:inputSwitch onLabel="ReadonlyOn" offLabel="ReadonlyOff"
+					disabled="true" value="#{sessionBean.readOnly}" />
+				<p:inputSwitch onLabel="ServerModeOn" offLabel="ServerModeOff"
+					disabled="true" value="#{sessionBean.serverMode}" />
+				<span class="ui-separator"> <span
+					class="ui-icon ui-icon-grip-dotted-vertical" />
+				</span>
+				<p:commandButton type="push" title="Save" image="ui-icon-disk"
+					onclick="PF('unlock-key').show()" />
+					
+
+			</f:facet>
+			<f:facet name="right">
+				<p:menuButton value="Navigate">
+					<p:menuitem value="Manage Session" url="manageSession.xhtml" />
+					<p:menuitem value="Logout" url="#" />
+				</p:menuButton>
+			</f:facet>
+		</p:toolbar>
+				<p:link title="Manage Session" href="manageSession.xhtml" />	
+
+		<p:dialog widgetVar="unlock-key">
+			<p:inputText label="keyFile" value="#{sessionBean.keyFile}"></p:inputText>
+			<p:password value="#{sessionBean.keyPass}" />
+			<p:commandButton type="push" action="#{sessionBean.unlockKey()}"
+				onclick="PF('unlock-key').hide()" title="Print"
+				image="ui-icon-print" />
+		</p:dialog>
+
+	</h:form>
+
+
 	<h2>Checksum database for #{checksumDatabase.name()}</h2>
-	<p:outputLabel value="Check out the description: " />
-	<p:link href="#{checksumDatabase.url()}"
-		value="#{checksumDatabase.url()}" />
-	<p:panel header="currently #{checksumDatabase.count()} entries">
-		<c:forEach items="#{checksumDatabase.entries}" var="e">
+
+	<!-- grid begin -->
+	<div class="ui-g">
+		<div class="ui-g-5">
+			<p:outputLabel value="Check out the description: " />
+			<p:link href="#{checksumDatabase.url()}"
+				value="#{checksumDatabase.url()}" />
+			<p:panel header="currently #{checksumDatabase.count()} entries">
+				<c:forEach items="#{checksumDatabase.entries}" var="e">
 			version: <p:outputLabel value="#{e.version}" />
 			at: <p:outputLabel value="#{e.date}" />
 			checksum: <p:outputLabel value="#{e.checksum}" />
-			<br />
-		</c:forEach>
-	</p:panel>
+					<br />
+				</c:forEach>
+			</p:panel>
+
+			<chsum:checksumDatabase contract="#{checksumDatabase}" />
+		</div>
+
+		<div class="ui-g-5">
+			<p:tabView>
+				<chsum:checksumDatabaseAttributes contract="#{checksumDatabase}" />
+			</p:tabView>
+
+			<p:accordionPanel>
+				<chsum:checksumDatabaseAttributes contract="#{checksumDatabase}" />
+			</p:accordionPanel>
+		</div>
+	</div>
+
 </h:body>
 </html>
