@@ -15,39 +15,41 @@
 	<!-- grid begin -->
 	<div class="ui-g">
 		<div class="ui-g-5">
-
-
-			<h:form>
+			<h:form id="sessionForm">
 				<p:panel header="Session config">
 					<div class="ui-g">
-						<div class="ui-g-5">Readonly</div>
-						<div class="ui-g-7">
-							<p:inputSwitch disabled="true" value="#{sessionBean.readOnly}" />
+						<div class="ui-g-3">mode :</div>
+						<div class="ui-g-9">
+							<p:selectBooleanButton offLabel="readonly" onLabel="writeable"
+								disabled="#{sessionBean.readOnly}"
+								value="#{sessionBean.readOnly}">
+								<p:ajax update="account :sessionForm" listener="#{sessionBean.setReadOnly()}" />
+							</p:selectBooleanButton>
 						</div>
-						<div class="ui-g-5">server mode</div>
-						<div class="ui-g-7">
-							<p:inputSwitch disabled="true" value="#{sessionBean.serverMode}" />
+						<div class="ui-g-3">server mode :</div>
+						<div class="ui-g-9">
+							<p:inputSwitch value="#{sessionBean.serverMode}" />
 						</div>
-						<div class="ui-g-5">key file</div>
-						<div class="ui-g-7">
-
-							<p:inputText label="keyFile" value="#{sessionBean.keyFile}"></p:inputText>
+						<div class="ui-g-3">key file</div>
+						<div class="ui-g-9">
+							<p:inputText label="keyFile" value="#{sessionBean.keyFile}" size="40"/>
 						</div>
-						<div class="ui-g-5">passwort</div>
-						<div class="ui-g-7">
-
-							<p:password value="#{sessionBean.keyPass}" />
+						<div class="ui-g-3">passwort</div>
+						<div class="ui-g-9">
+							<p:password value="#{sessionBean.keyPass}" size="40"/>
 						</div>
-						<p:commandButton type="push" action="#{sessionBean.unlockKey()}"
-							title="Print" image="ui-icon-print" />
+						<p:commandButton update=":sessionForm account" class="ui-g-1"
+							type="push" action="#{sessionBean.unlockKey()}" title="Print"
+							icon="ui-icon-print" />
 					</div>
 				</p:panel>
 			</h:form>
 		</div>
 		<div class="ui-g-5">
-			<p:panel header="Account">
+			<p:panel id="account" header="Account">
 			Balance:
 			<p:outputLabel value="#{sessionBean.balance}" />
+				<br />
 			Address:
 			<p:outputLabel value="#{sessionBean.accountAddress}" />
 			</p:panel>
@@ -57,7 +59,7 @@
 			<h:form>
 				<p:panel header="Contract">
 			Contract Address:
-			<p:inputText value="#{sessionBean.contractAddress}" />
+			<p:inputText value="#{sessionBean.contractAddress}" size="42"/>
 					<p:commandButton action="#{sessionBean.changeContractAddress()}" />
 				</p:panel>
 			</h:form>

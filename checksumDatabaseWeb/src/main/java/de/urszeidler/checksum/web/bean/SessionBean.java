@@ -21,6 +21,7 @@ import org.adridadou.ethereum.propeller.values.EthAddress;
 import org.adridadou.ethereum.propeller.values.EthValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import de.urszeidler.checksum.EthereumInstance;
 
@@ -36,7 +37,7 @@ public class SessionBean {
 
 	@Inject
 	private ApplicationBean application;
-
+	@Value("${keyFile}")
 	private String keyFile;
 	private String keyPass;
 
@@ -75,6 +76,12 @@ public class SessionBean {
 	}
 
 	public void unlockKey() {
+//		if (readOnly) {
+//			account = AccountProvider.fromPrivateKey(BigInteger.valueOf(100000L));
+//			accountChanged(account);
+//			return;
+//		}
+
 		if (log.isDebugEnabled()) {
 			log.debug("Unlock Key:" + keyFile);
 		}
@@ -131,12 +138,20 @@ public class SessionBean {
 	public EthAddress getAccountAddress() {
 		return account.getAddress();
 	}
-	
+
 	public EthAddress getContractAddress() {
 		return contractAddress;
 	}
 
 	public void setContractAddress(EthAddress contractAddress) {
 		this.contractAddress = contractAddress;
+	}
+
+	public void setServerMode(boolean serverMode) {
+		this.serverMode = serverMode;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 }

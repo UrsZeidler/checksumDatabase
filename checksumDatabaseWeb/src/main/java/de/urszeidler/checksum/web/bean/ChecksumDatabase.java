@@ -39,7 +39,7 @@ public class ChecksumDatabase {
 
 	private AddEntry_string_string addEntry = new AddEntry_string_string();
 	private ChangeOwner_address changeOwner = new ChangeOwner_address();
-	private de.urszeidler.checksum.contract.ChecksumDatabase createChecksumDatabaseProxy;
+	private de.urszeidler.checksum.contract.ChecksumDatabase checksumDatabaseProxy;
 
 	public class ChangeOwner_address {
 		private EthAddress address;
@@ -96,7 +96,7 @@ public class ChecksumDatabase {
 
 			@Override
 			public void accountChanged(EthAccount account) {
-				createChecksumDatabaseProxy = null;
+				checksumDatabaseProxy = null;
 			}
 		});
 
@@ -104,20 +104,20 @@ public class ChecksumDatabase {
 	
 	
 	public void changeContractAddress() {
-		createChecksumDatabaseProxy = null;
+		checksumDatabaseProxy = null;
 	}
 
 	public de.urszeidler.checksum.contract.ChecksumDatabase getChecksumDatabase() {
-		if (createChecksumDatabaseProxy == null) {
+		if (checksumDatabaseProxy == null) {
 
 			try {
-				createChecksumDatabaseProxy = application.getContractDeployer()
+				checksumDatabaseProxy = application.getContractDeployer()
 						.createChecksumDatabaseProxy(session.getAccount(), session.getContractAddress());
 			} catch (IOException | InterruptedException | ExecutionException e) {
 				log.error("Error creating contractProx.", e);
 			}
 		}
-		return createChecksumDatabaseProxy;
+		return checksumDatabaseProxy;
 	}
 
 	public String name() {
